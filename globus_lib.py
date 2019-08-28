@@ -1,4 +1,4 @@
-import logging
+import log_lib
 import globus_sdk
 
 __author__ = "Francesco De Carlo"
@@ -10,8 +10,6 @@ __all__ = ['create_clients',
            'create_dir',
            'share_dir']
 
-LOG = logging.getLogger(__name__)
-
 def show_endpoints(params):
     # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
     # to create your project app_id
@@ -20,17 +18,17 @@ def show_endpoints(params):
 
     ac, tc = create_clients(app_id)
 
-    print("Endpoints shared with me:")
+    log_lib.info("Endpoints shared with me:")
     for ep in tc.endpoint_search(filter_scope="shared-with-me"):
         # Logger("log").info("[{}] {}".format(ep["id"], ep["display_name"]))
         # LOG.info("[{}] {}".format(ep["id"], ep["display_name"]))
         # # LOG.info(ep["id"], ep["display_name"])
         # LOG.info(ep["id"] + ep["display_name"])
-        print("[{}] {}".format(ep["id"], ep["display_name"]))
-    print("My Endpoints:")
+        log_lib.info("[{}] {}".format(ep["id"], ep["display_name"]))
+    log_lib.info("My Endpoints:")
     for ep in tc.endpoint_search(filter_scope="my-endpoints"):
         # Logger("log").info("[{}] {}".format(ep["id"], ep["display_name"]))
-        print("[{}] {}".format(ep["id"], ep["display_name"]))
+        log_lib.info("[{}] {}".format(ep["id"], ep["display_name"]))
 
 
 def create_clients(app_id):
@@ -51,11 +49,12 @@ def create_clients(app_id):
   client = globus_sdk.NativeAppAuthClient(app_id)
   client.oauth2_start_flow(refresh_tokens=True)
 
-  print('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
+  log_lib.warning('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
 
   get_input = getattr(__builtins__, 'raw_input', input)
-  auth_code = get_input(
-      'Please enter the code you get after login here: ').strip()
+  # auth_code = get_input('Please enter the code you get after login here: ').strip() # pythn 3
+  auth_code = raw_input('Please enter the code you get after login here: ').strip() # python 2.7
+  
   token_response = client.oauth2_exchange_code_for_tokens(auth_code)
 
   # let's get stuff for the Globus Transfer service
@@ -95,7 +94,7 @@ def share_dir(share_path,     # Endpoint path to shared folder
     # Generate user id from user email
     r = ac.get_identities(usernames=email)
     user_id = r['identities'][0]['id']
-    # print(r, user_id)
+    # log_lib.info(r, user_id)
 
     # Set access control and notify user
     rule_data = {
@@ -110,26 +109,3 @@ def share_dir(share_path,     # Endpoint path to shared folder
     }
     tc.add_endpoint_acl_rule(endpoint_id, rule_data)
 
-
-
-class Logger(object):
-    __GREEN = "\033[92m"
-    __RED = '\033[91m'
-    __YELLOW = '\033[33m'
-    __ENDC = '\033[0m'
-
-    def __init__(self, name):
-        self.logger = logging.getLogger(name)
-        self.extra={'logger_name': name, 'endColor': self.__ENDC, 'color': self.__GREEN}
-
-    def info(self, msg):
-        self.extra['color'] = self.__GREEN
-        self.logger.info(msg, extra=self.extra)
-
-    def error(self, msg):
-        self.extra['color'] = self.__RED
-        self.logger.error(msg, extra=self.extra)
-
-    def warning(self, msg):
-        self.extra['color'] = self.__YELLOW
-        self.logger.warning(msg, extra=self.extra)
