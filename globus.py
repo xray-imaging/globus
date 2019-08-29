@@ -28,14 +28,17 @@ def init(args):
 
 
 def show(args):
-    log_lib.info('Show all endpoints owned and shared by your globus user credentials')
-    globus_lib.show_endpoints(args)
+    # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
+    # to create your project app_id. Once is set put it in globus.config app-id field
+    app_id = args.app_id
+    ac, tc = globus_lib.create_clients(app_id)
+    globus_lib.show_endpoints(args, ac, tc)
 
 
 def mkdir(args):
 
     # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
-    # to create your project app_id
+    # to create your project app_id. Once is set put it in globus.config app-id field
     app_id = args.app_id
     server_id = args.globus_server_uuid
     server_top_dir = args.globus_server_top_dir
@@ -46,10 +49,11 @@ def mkdir(args):
     pi_email = args.pi_email
 
     ac, tc = globus_lib.create_clients(app_id)
+    globus_lib.show_endpoints(args, ac, tc)
 
-    log_lib.info("Endpoints shared with me:")
-    for ep in tc.endpoint_search(filter_scope="shared-with-me"):
-        log_lib.info("*** [{}] {}".format(ep["id"], ep["display_name"]))
+    # log_lib.info("Endpoints shared with me:")
+    # for ep in tc.endpoint_search(filter_scope="shared-with-me"):
+    #     log_lib.info("*** [{}] {}".format(ep["id"], ep["display_name"]))
 
     log_lib.info('On server %s top directory %s' % (server_id, server_top_dir))
     shared_path = globus_lib.create_dir(year_month, server_id, server_top_dir, ac, tc)

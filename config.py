@@ -1,12 +1,11 @@
 import argparse
 import sys
-import logging
 import configparser
 from collections import OrderedDict
 import numpy as np
+import log_lib
 
 
-LOG = logging.getLogger(__name__)
 NAME = "globus.conf"
 SECTIONS = OrderedDict()
 
@@ -234,8 +233,8 @@ def log_values(args):
         entries = sorted((k for k in args.keys() if k in SECTIONS[section]))
 
         if entries:
-            LOG.debug(name)
+            log_lib.info(name)
 
             for entry in entries:
                 value = args[entry] if args[entry] is not None else "-"
-                LOG.debug("  {:<16} {}".format(entry, value))
+                log_lib.info("  {:<16} {}".format(entry, value))

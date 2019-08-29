@@ -10,25 +10,15 @@ __all__ = ['create_clients',
            'create_dir',
            'share_dir']
 
-def show_endpoints(params):
-    # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
-    # to create your project app_id
-    # app_id = "8235a963-59a6-4354-9724-d330025b199d"
-    app_id = params.app_id
+def show_endpoints(args, ac, tc):
 
-    ac, tc = create_clients(app_id)
-
-    log_lib.info("Endpoints shared with me:")
+    log_lib.info('Show all endpoints shared and owned by my globus user credentials')
+    log_lib.info("*** Endpoints shared with me:")
     for ep in tc.endpoint_search(filter_scope="shared-with-me"):
-        # Logger("log").info("[{}] {}".format(ep["id"], ep["display_name"]))
-        # LOG.info("[{}] {}".format(ep["id"], ep["display_name"]))
-        # # LOG.info(ep["id"], ep["display_name"])
-        # LOG.info(ep["id"] + ep["display_name"])
-        log_lib.info("[{}] {}".format(ep["id"], ep["display_name"]))
-    log_lib.info("My Endpoints:")
+        log_lib.info("*** *** [{}] {}".format(ep["id"], ep["display_name"]))
+    log_lib.info("*** Endpoints owned with me::")
     for ep in tc.endpoint_search(filter_scope="my-endpoints"):
-        # Logger("log").info("[{}] {}".format(ep["id"], ep["display_name"]))
-        log_lib.info("[{}] {}".format(ep["id"], ep["display_name"]))
+         log_lib.info("*** *** [{}] {}".format(ep["id"], ep["display_name"]))
 
 
 def create_clients(app_id):
