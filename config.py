@@ -26,6 +26,23 @@ SECTIONS['general'] = {
         'help': "File name of optional log",
         'metavar': 'FILE'}}
 
+SECTIONS['experiment'] = {
+    'year-month': {
+        'default': '2020-12',
+        'type': str,
+        'help': "Experiment year and month",
+        'metavar': 'FILE'},
+    'pi-last-name': {
+        'default': 'decarlo',
+        'type': str,
+        'help': "Experiment PI last name",
+        'metavar': 'FILE'},
+    'pi-email': {
+        'default': 'decarlof@gmail.com',
+        'type': str,
+        'help': "Experiment PI email",
+        'metavar': 'FILE'}}
+
 SECTIONS['file-io'] = {
     'input-file-path': {
         'default': '.',
@@ -52,21 +69,21 @@ SECTIONS['file-io'] = {
 
 SECTIONS['globus'] = {
     'app-id': {
-        'default': '8235a963-59a6-4354-9724-d330025b199d',
+        'default': 'a9badd00-39c3-4473-b180-8bccc113ba1d', # for usr32idc
         'type': str,
         'help': "App id UUID, to create one see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client",
         'metavar': 'PATH'},
     'personal-endpoint-name': {
         'type': str,
-        'default': 'tocai',
+        'default': 'handyn',
         'help': "Personal endpoint name"},
     'personal-endpoint-uuid': {
         'type': str,
-        'default': 'd0a3f712-828e-11e7-8e2a-22000b9923ef',
+        'default': 'f1f39c62-ec26-11e8-8cab-0a1d4c5c824a',
         'help': "Personal endpoint UUID"},
     'personal-endpoint-top-dir': {
         'type': str,
-        'default': '/local/dataraid/',
+        'default': '/local/data/',
         'help': "Personal endpoint top directory"},
     'globus-server-name': {
         'type': str,
@@ -74,7 +91,11 @@ SECTIONS['globus'] = {
         'help': "Globus server name"},
     'globus-server-uuid': {
         'type': str,
-        'default': 'e133a81a-6d04-11e5-ba46-22000b92c6ec',
+        'default': 'e133a81a-6d04-11e5-ba46-22000b92c6ec', # petrel tomography
+        'help': "Globus server UUID"},
+    'globus-message': {
+        'type': str,
+        'default': 'Notification Message to user',
         'help': "Globus server UUID"},
     'globus-server-top-dir': {
         'type': str,
@@ -83,7 +104,7 @@ SECTIONS['globus'] = {
 
 
 
-GLOBUS_PARAMS = ('file-io', 'globus')
+GLOBUS_PARAMS = ('file-io', 'globus', 'experiment')
 
 NICE_NAMES = ('General', 'Input')
 

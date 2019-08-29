@@ -31,11 +31,36 @@ def show(args):
 
 
 def mkdir(args):
-    # from xfluo import mkdiro
-    # mkdiro.tomo(args)
+
+    # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
+    # to create your project app_id
+    print(args.app_id)
+    app_id = args.app_id
+    server_id = args.globus_server_uuid
+    server_top_dir = args.globus_server_top_dir
+    message = args.globus_message
+
+    year_month = args.year_month
+    pi_last_name = args.pi_last_name
+    pi_email = args.pi_email
+
+    ac, tc = globus_lib.create_clients(app_id)
+
+    log_lib.info("Endpoints shared with me:")
+    for ep in tc.endpoint_search(filter_scope="shared-with-me"):
+        log_lib.info("[{}] {}".format(ep["id"], ep["display_name"]))
+
+    log_lib.info('On server %s top directory %s' % (server_id, server_top_dir))
+    shared_path = globus_lib.create_dir(year_month, server_id, server_top_dir, ac, tc)
+    log_lib.info('Created folder: %s' % shared_path)
+    shared_path = globus_lib.create_dir(pi_last_name, server_id, server_top_dir + year_month + '/', ac, tc)
+    log_lib.info('Created folder: %s' % shared_path)
+    globus_lib.share_dir(shared_path, pi_email, server_id, message, ac, tc)
+    log_lib.info('Sent email to %s' % pi_email)
+
     return 0
 
-def space_holder():
+def create(args):
     # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
     # to create your project app_id
     # app_id = "8235a963-59a6-4354-9724-d330025b199d"
@@ -79,10 +104,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', **config.SECTIONS['general']['config'])
     show_params = config.GLOBUS_PARAMS
+    mkdir_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
         ('init',        init,           (),                             "Create configuration file"),
         ('show',        show,           show_params,                    "Show endpoints"),
+        ('mkdir',       mkdir,          mkdir_params,                   "Create folder on endpoint"),
+
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')
@@ -97,6 +125,7 @@ def main():
 
     try:
         config.log_values(args)
+        # log_lib.info(args)
         args._func(args)
     except RuntimeError as e:
         log_lib.error(str(e))

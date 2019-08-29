@@ -88,6 +88,7 @@ def create_dir(new_share,     # Subdirectory name under top to be created and sh
 def share_dir(share_path,     # Endpoint path to shared folder
               email,          # User email address for notification
               endpoint_id,    # Endpoint id on which to create shared folder
+              message,        # Notification email message
               ac,             # Authorize client  
               tc):            # Transfer client
 
@@ -104,8 +105,7 @@ def share_dir(share_path,     # Endpoint path to shared folder
       'path': share_path,
       'permissions': 'r',
       'notify_email': email,
-      'notify_message': 
-          'The data that you requested from RDP is available.'
+      'notify_message': message
     }
     tc.add_endpoint_acl_rule(endpoint_id, rule_data)
 
