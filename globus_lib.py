@@ -65,24 +65,25 @@ def create_clients(app_id):
   return ac, tc
 
 
-def create_dir(new_dir,         # Subdirectory name under top to be created and shared with user
+def create_dir(directory,         # Subdirectory name under top to be created and shared with user
                server_id,       # Endpoint id on which to create shared folder
                server_top_dir,  # Endpoint top directory
                ac,              # Authorize client  
                tc):             # Transfer client
 
+    new_dir_path = server_top_dir + directory + '/'
+
     # Create directory to be shared
-    new_dir_path = server_top_dir + new_dir + '/'
-    response = tc.operation_mkdir(server_id, path=new_dir_path)
-    print ('********************')
-    print (response)
-    print ('********************')
-    return new_dir_path
+    try:
+      response = tc.operation_mkdir(server_id, path=new_dir_path)
+      log_lib.info('*** Created folder: %s' % new_dir_path)
+    except:
+      log_lib.warning('Path %s already exists' % new_dir_path)
 
 
-def share_dir(share_path,     # Endpoint path to shared folder
+def share_dir(directory,      # directory on the Endpoint you want to share
               email,          # User email address for notification
-              endpoint_id,    # Endpoint id on which to create shared folder
+              server_id,      # Endpoint id on which to create shared folder
               message,        # Notification email message
               ac,             # Authorize client  
               tc):            # Transfer client
@@ -97,10 +98,17 @@ def share_dir(share_path,     # Endpoint path to shared folder
       'DATA_TYPE': 'access',
       'principal_type': 'identity',
       'principal': user_id,
-      'path': share_path,
+      'path': directory,
       'permissions': 'r',
       'notify_email': email,
       'notify_message': message
     }
-    tc.add_endpoint_acl_rule(endpoint_id, rule_data)
+
+    try: 
+      response = tc.add_endpoint_acl_rule(server_id, rule_data)
+      log_lib.info(response.message)
+    except:
+      log_lib.warning('Path %s already shared with %s' % (directory, email))
+      return None
+
 
