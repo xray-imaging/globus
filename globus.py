@@ -7,6 +7,7 @@ import logging
 import time
 import re
 from datetime import datetime
+from epics import PV
 
 import config
 import globus_lib
@@ -18,6 +19,16 @@ __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
 __version__ = "0.0.1"
 __docformat__ = 'restructuredtext en'
+
+
+global_PVs = {}
+
+
+def init_general_PVs(global_PVs):
+
+    global_PVs['ExperimentYearMonth'] = PV('2bmS1:ExpInfo:ExperimentYearMonth')
+    global_PVs['UserEmail'] = PV('2bmS1:ExpInfo:UserEmail')
+    global_PVs['UserLastName'] = PV('2bmS1:ExpInfo:UserLastName')
 
 
 def init(args):
@@ -61,7 +72,7 @@ def mkdir(args):
 
 
     new_dir = year_month + '/' + pi_last_name
-    log_lib.info('Sharing %s with %s' % (new_dir, args.pi_email))
+    log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
     globus_lib.share_dir(new_dir, args, ac, tc)
 
 
@@ -99,9 +110,22 @@ def main():
 
     args = config.parse_known_args(parser, subparser=True)
 
+    init_general_PVs(global_PVs)
+    year_month = global_PVs['ExperimentYearMonth'].get()
+    pi_last_name = global_PVs['UserLastName'].get()
+    pi_email = global_PVs['UserEmail'].get()
+    
+    args.year_month = "".join([chr(c) for c in year_month]).rstrip('\x00')
+    args.pi_last_name = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
+    args.pi_email = "".join([chr(c) for c in pi_email]).rstrip('\x00')
+
     try:
+        # load args from default (config.py) if not changed
         config.log_values(args)
         args._func(args)
+        # undate globus.config file
+        sections = config.GLOBUS_PARAMS
+        config.write(args.config, args=args, sections=sections)
     except RuntimeError as e:
         log_lib.error(str(e))
         sys.exit(1)

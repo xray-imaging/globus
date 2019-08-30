@@ -18,12 +18,7 @@ SECTIONS['general'] = {
     'verbose': {
         'default': True,
         'help': 'Verbose output',
-        'action': 'store_true'},
-    'log': {
-        'default': None,
-        'type': str,
-        'help': "File name of optional log",
-        'metavar': 'FILE'}}
+        'action': 'store_true'}}
 
 SECTIONS['experiment'] = {
     'year-month': {
