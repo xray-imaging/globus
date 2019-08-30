@@ -65,7 +65,7 @@ def create_clients(app_id):
   return ac, tc
 
 
-def create_dir(directory,       # Subdirectory name under top to be created and shared with user
+def create_dir(directory,       # Subdirectory name under top to be created
                server_id,       # Endpoint id on which to create shared folder
                server_top_dir,  # Endpoint top directory
                ac,              # Authorize client  
@@ -83,7 +83,7 @@ def create_dir(directory,       # Subdirectory name under top to be created and 
       return False
 
 
-def share_dir(directory,      # directory on the Endpoint you want to share
+def share_dir(directory,      # Subdirectory name under top to be shared with user email address
               email,          # User email address for notification
               server_id,      # Endpoint id on which to create shared folder
               message,        # Notification email message
