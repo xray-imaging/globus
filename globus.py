@@ -54,10 +54,12 @@ def mkdir(args):
     log_lib.info('On server %s top directory %s' % (args.globus_server_uuid, args.globus_server_top_dir))
 
     new_dir = year_month
-    globus_lib.create_dir(new_dir, server_id, server_top_dir, ac, tc)
+    globus_lib.create_dir(new_dir, args, ac, tc)
+    # globus_lib.create_dir(new_dir, server_id, server_top_dir, ac, tc)
 
     new_dir = year_month + '/' + pi_last_name
-    globus_lib.create_dir(new_dir, server_id, server_top_dir, ac, tc)
+    globus_lib.create_dir(new_dir, args, ac, tc)
+    # globus_lib.create_dir(new_dir, server_id, server_top_dir, ac, tc)
 
     # globus_lib.create_dir(pi_last_name, server_id, server_top_dir + year_month + '/', ac, tc)
     # if new_dir_path is not None:
