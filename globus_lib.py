@@ -84,9 +84,6 @@ def create_dir(directory,       # Subdirectory name under top to be created
 
 def share_dir(directory,      # Subdirectory name under top to be shared with user email address
               args,
-              # email,          # User email address for notification
-              # server_id,      # Endpoint id on which to create shared folder
-              # message,        # Notification email message
               ac,             # Authorize client  
               tc):            # Transfer client
 
@@ -95,12 +92,13 @@ def share_dir(directory,      # Subdirectory name under top to be shared with us
     user_id = r['identities'][0]['id']
     # log_lib.info(r, user_id)
 
+    directory_full_path = args.globus_server_top_dir + directory + '/'
     # Set access control and notify user
     rule_data = {
       'DATA_TYPE': 'access',
       'principal_type': 'identity',
       'principal': user_id,
-      'path': directory,
+      'path': directory_full_path,
       'permissions': 'r',
       'notify_email': args.pi_email,
       'notify_message': args.globus_message
@@ -108,9 +106,10 @@ def share_dir(directory,      # Subdirectory name under top to be shared with us
 
     try: 
       response = tc.add_endpoint_acl_rule(args.globus_server_uuid, rule_data)
-      log_lib.info(response.message)
+      log_lib.info('Path %s has been shared with %s' % (directory_full_path, args.pi_email))
+      return True
     except:
-      log_lib.warning('Path %s already shared with %s' % (directory, args.pi_email))
-      return None
+      log_lib.warning('Path %s already shared with %s' % (directory_full_path, args.pi_email))
+      return False
 
 

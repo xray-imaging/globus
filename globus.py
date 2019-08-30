@@ -55,16 +55,12 @@ def mkdir(args):
 
     new_dir = year_month
     globus_lib.create_dir(new_dir, args, ac, tc)
-    # globus_lib.create_dir(new_dir, server_id, server_top_dir, ac, tc)
 
     new_dir = year_month + '/' + pi_last_name
     globus_lib.create_dir(new_dir, args, ac, tc)
-    # globus_lib.create_dir(new_dir, server_id, server_top_dir, ac, tc)
 
-    # globus_lib.create_dir(pi_last_name, server_id, server_top_dir + year_month + '/', ac, tc)
-    # if new_dir_path is not None:
-    #     log_lib.info('*** Created folder: %s' % new_dir_path)
-
+    new_dir = year_month + '/' + pi_last_name
+    globus_lib.share_dir(new_dir, args, ac, tc)
     # ret = globus_lib.share_dir(new_dir_path, pi_email, server_id, message, ac, tc)
     # if ret is not None:
     #     log_lib.info('*** Sent email to %s' % pi_email)
