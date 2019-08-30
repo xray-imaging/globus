@@ -65,7 +65,7 @@ def create_clients(app_id):
   return ac, tc
 
 
-def create_dir(directory,         # Subdirectory name under top to be created and shared with user
+def create_dir(directory,       # Subdirectory name under top to be created and shared with user
                server_id,       # Endpoint id on which to create shared folder
                server_top_dir,  # Endpoint top directory
                ac,              # Authorize client  
@@ -77,8 +77,10 @@ def create_dir(directory,         # Subdirectory name under top to be created an
     try:
       response = tc.operation_mkdir(server_id, path=new_dir_path)
       log_lib.info('*** Created folder: %s' % new_dir_path)
+      return True
     except:
       log_lib.warning('Path %s already exists' % new_dir_path)
+      return False
 
 
 def share_dir(directory,      # directory on the Endpoint you want to share
