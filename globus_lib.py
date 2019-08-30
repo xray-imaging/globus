@@ -64,16 +64,21 @@ def create_clients(app_id):
 
   return ac, tc
 
-def create_dir(new_share,     # Subdirectory name under top to be created and shared with user
-               endpoint_id,   # Endpoint id on which to create shared folder
-               endpoint_top,  # Endpoint top directory
-               ac,            # Authorize client  
-               tc):           # Transfer client
+
+def create_dir(new_dir,         # Subdirectory name under top to be created and shared with user
+               server_id,       # Endpoint id on which to create shared folder
+               server_top_dir,  # Endpoint top directory
+               ac,              # Authorize client  
+               tc):             # Transfer client
 
     # Create directory to be shared
-    share_path = endpoint_top + new_share + '/'
-    tc.operation_mkdir(endpoint_id, path=share_path)
-    return share_path
+    new_dir_path = server_top_dir + new_dir + '/'
+    response = tc.operation_mkdir(server_id, path=new_dir_path)
+    print ('********************')
+    print (response)
+    print ('********************')
+    return new_dir_path
+
 
 def share_dir(share_path,     # Endpoint path to shared folder
               email,          # User email address for notification
