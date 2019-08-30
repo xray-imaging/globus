@@ -51,7 +51,7 @@ def mkdir(args):
     pi_last_name = args.pi_last_name
     pi_email = args.pi_email
 
-    log_lib.info('On server %s top directory %s' % (args.globus_server_uuid, args.globus_server_top_dir))
+    log_lib.info('Creating user directories on server %s:/%s' % (args.globus_server_uuid, args.globus_server_top_dir))
 
     new_dir = year_month
     globus_lib.create_dir(new_dir, args, ac, tc)
@@ -59,11 +59,10 @@ def mkdir(args):
     new_dir = year_month + '/' + pi_last_name
     globus_lib.create_dir(new_dir, args, ac, tc)
 
+
     new_dir = year_month + '/' + pi_last_name
+    log_lib.info('Sharing %s with %s' % (new_dir, args.pi_email))
     globus_lib.share_dir(new_dir, args, ac, tc)
-    # ret = globus_lib.share_dir(new_dir_path, pi_email, server_id, message, ac, tc)
-    # if ret is not None:
-    #     log_lib.info('*** Sent email to %s' % pi_email)
 
 
 def main():

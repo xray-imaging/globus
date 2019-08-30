@@ -78,7 +78,7 @@ def create_dir(directory,       # Subdirectory name under top to be created
       log_lib.info('*** Created folder: %s' % new_dir_path)
       return True
     except:
-      log_lib.warning('Path %s already exists' % new_dir_path)
+      log_lib.warning('*** Path %s already exists' % new_dir_path)
       return False
 
 
@@ -106,10 +106,10 @@ def share_dir(directory,      # Subdirectory name under top to be shared with us
 
     try: 
       response = tc.add_endpoint_acl_rule(args.globus_server_uuid, rule_data)
-      log_lib.info('Path %s has been shared with %s' % (directory_full_path, args.pi_email))
+      log_lib.info('*** Path %s has been shared with %s' % (directory_full_path, args.pi_email))
       return True
     except:
-      log_lib.warning('Path %s already shared with %s' % (directory_full_path, args.pi_email))
+      log_lib.warning('*** Path %s is already shared with %s' % (directory_full_path, args.pi_email))
       return False
 
 
