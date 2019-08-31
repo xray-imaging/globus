@@ -119,6 +119,10 @@ def main():
     args.pi_last_name = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
     args.pi_email = "".join([chr(c) for c in pi_email]).rstrip('\x00')
 
+
+    with open (args.globus_message_file, "r") as myfile:
+        args.globus_message=myfile.read()
+    print(args.globus_message)    
     try:
         # load args from default (config.py) if not changed
         config.log_values(args)

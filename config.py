@@ -91,6 +91,11 @@ SECTIONS['globus'] = {
         'type': str,
         'default': 'Notification Message to user',
         'help': "Globus server UUID"},
+    'globus-message-file': {
+        'default': 'message.txt',
+        'type': str,
+        'help': "File name of the notification message to user",
+        'metavar': 'FILE'},
     'globus-server-top-dir': {
         'type': str,
         'default': '/2-BM/',
