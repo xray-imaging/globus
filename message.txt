@@ -1,0 +1,32 @@
+
+All,
+
+we are ready to start data collection, above is the link to the raw and reconstructed data.
+
+To download data you need to create a globus account at https://www.globus.org/
+Please read https://docs.globus.org/how-to/ for more information
+
+Below are other useful links:
+
+- beamline documentation and support request:
+https://2bm-ops.readthedocs.io/
+
+
+- raw data viewers:
+hdfview https://support.hdfgroup.org/products/java/hdfview/
+argos (https://github.com/titusjan/argos)
+
+- reconstruction scripts:
+look for the PI last name under:
+https://github.com/decarlof/util/tree/master/
+
+To run the reconstruction script you need to install tomopy:
+https://tomopy.readthedocs.io/
+
+
+The content of these links will update during the experiment and will be available permanently except the raw and reconstruction link where we ask you to download and make a copy of the data (raw with a backup) within 4 weeks. After that time the data will be deleted from our systems, if you need more time please send an email to me or to Pasha.
+
+If you have some interesting/challenging data set that you would like to share with the community submit a pull request at:
+https://tomobank.readthedocs.io
+
+francesco
