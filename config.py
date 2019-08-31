@@ -73,7 +73,7 @@ SECTIONS['globus'] = {
         'help': "Personal endpoint name"},
     'personal-endpoint-uuid': {
         'type': str,
-        'default': 'f1f39c62-ec26-11e8-8cab-0a1d4c5c824a',
+        'default': 'f1f39c62-ec26-11e8-8cab-0a1d4c5c824a', # for petrel#tomography
         'help': "Personal endpoint UUID"},
     'personal-endpoint-top-dir': {
         'type': str,

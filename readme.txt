@@ -3,7 +3,7 @@ Tasks:
         - Authenticate with Globus
         - Create a folder on a Globus server
         - Share the Globus server folder with a user
-        - Send to the user an email with a link to the shared folder
+        - Send to the user an email with a link to the shared folder and experiment information
 
 Installation:
 
@@ -14,10 +14,19 @@ Configuration:
         - see Step 1 at https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
           to register your app with Globus and get your project app_id
 
-        - set your project app_id in globus.py
+        - set your project app-id and personal-endpoint-uuid as default in the config.py file
 
 Usage:
         globus.py -h for help
         
-        - running globus.py the first time provides the list of Globus servers shared with your Globus account. 
-          Select one Globus server among the one available by assigning its UUID to the globus_server_id variable.
+        globus.py init
+            Creates a globus.conf default file
+
+        globus.py show
+            Show all endpoints shared and owned by the active globus credentials 
+
+        globus.py mkdir
+            Using the current user information from the scheduling system,
+            - creates a directory named "year-month/pi_last_name" on the endpoint
+            - share the directory with globus with the user
+            - send a notification to the user with the directory globus link 
