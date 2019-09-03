@@ -56,22 +56,36 @@ def mkdir(args):
 
     server_id = args.globus_server_uuid
     server_top_dir = args.globus_server_top_dir
-    message = args.globus_message
 
-    year_month = args.year_month
-    pi_last_name = args.pi_last_name
-    pi_email = args.pi_email
+    # year_month = args.year_month
+    # pi_last_name = args.pi_last_name
+    # pi_email = args.pi_email
+    init_general_PVs(global_PVs)
+    year_month = global_PVs['ExperimentYearMonth'].get()
+    pi_last_name = global_PVs['UserLastName'].get()
+    pi_email = global_PVs['UserEmail'].get()
+    
+    args.year_month = "".join([chr(c) for c in year_month]).rstrip('\x00')
+    args.pi_last_name = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
+    args.pi_email = "".join([chr(c) for c in pi_email]).rstrip('\x00')
 
-    log_lib.info('Creating user directories on server %s:/%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+    # message = args.globus_message
+    # with open (args.globus_message_file, "r") as myfile:
+    #     args.globus_message=myfile.read()
+    # print(args.globus_message)  
 
-    new_dir = year_month
+    log_lib.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+
+
+    log_lib.info('************ %s' % args.year_month)
+
+    globus_lib.create_dir(args.year_month, args, ac, tc)
+
+    new_dir = args.year_month + '/' + args.pi_last_name
     globus_lib.create_dir(new_dir, args, ac, tc)
 
-    new_dir = year_month + '/' + pi_last_name
-    globus_lib.create_dir(new_dir, args, ac, tc)
 
-
-    new_dir = year_month + '/' + pi_last_name
+    new_dir = args.year_month + '/' + args.pi_last_name
     log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
     globus_lib.share_dir(new_dir, args, ac, tc)
 
@@ -109,20 +123,7 @@ def main():
         cmd_parser.set_defaults(_func=func)
 
     args = config.parse_known_args(parser, subparser=True)
-
-    init_general_PVs(global_PVs)
-    year_month = global_PVs['ExperimentYearMonth'].get()
-    pi_last_name = global_PVs['UserLastName'].get()
-    pi_email = global_PVs['UserEmail'].get()
-    
-    args.year_month = "".join([chr(c) for c in year_month]).rstrip('\x00')
-    args.pi_last_name = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
-    args.pi_email = "".join([chr(c) for c in pi_email]).rstrip('\x00')
-
-
-    # with open (args.globus_message_file, "r") as myfile:
-    #     args.globus_message=myfile.read()
-    # print(args.globus_message)    
+  
     try:
         # load args from default (config.py) if not changed
         config.log_values(args)
