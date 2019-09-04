@@ -32,7 +32,7 @@ Configuration
 Usage
 -----
 
-Once the `DTagging <https://github.com/decarlof/DTagging>`_ medm screen is synchronized with the APS scheduling system:
+Once the `DTagging <https://github.com/decarlof/DTagging>`_ medm screen is synchronized with the APS scheduling system and contains valid values like:
 
 .. image:: medm_screen.png
   :width: 400
