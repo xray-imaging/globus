@@ -53,5 +53,5 @@ globus.py -h for help
 
         - create a directory named "year-month/pi_last_name" on the endpoint
         - share the directory with globus with the user
-        - send a notification to the user with the URL to the shared folder
+        - send a notification to the user with the URL to the shared folder and a user customizable `message <https://github.com/decarlof/globus/blob/master/message.txt>`_
 
