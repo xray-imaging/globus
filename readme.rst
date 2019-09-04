@@ -2,6 +2,12 @@
 GLOBUS
 ======
 
+
+`globus <https://github.com/decarlof/globus>`_ is a python script that automatically creates a directory on a globus server and year-month/pi_last_name and sends a customizable notification email to pi_email that includes the URL to the shared folder.
+
+year-month, pi_last_name and pi_email area automatically retrieved from the APS scheduling system for the current user (see`DTagging <https://github.com/decarlof/DTagging>`_ for more information).
+
+
 Tasks
 -----
 - Authenticate with Globus
