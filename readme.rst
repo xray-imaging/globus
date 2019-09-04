@@ -24,8 +24,8 @@ Configuration
 -------------
 
 - see Step 1 in the `Globus tutorial <https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client>`_ to register your app with Globus and get your project app_id
-- set your project app-id and personal-endpoint-uuid as default in the config.py file
-- customize the email to the user by editing the `message <https://github.com/decarlof/globus/blob/master/message.txt>`_ 
+- set your project app-id and personal-endpoint-uuid as default in the `config.py <https://github.com/decarlof/globus/blob/master/config.py>`_ file
+- customize the email to the user by editing the `message <https://github.com/decarlof/globus/blob/master/message.txt>`_
 - for automatic retrieve of user information see `DTagging <https://github.com/decarlof/DTagging>`_. Alternatively you can set year-month, pi_last_name and pi_email as epics PV by configuring `init_general_PVs <https://github.com/decarlof/globus/blob/master/globus.py>`_
 
 
