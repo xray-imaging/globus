@@ -46,7 +46,7 @@ def show(args):
     globus_lib.show_endpoints(args, ac, tc)
 
 
-def mkdir(args):
+def email(args):
 
     # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
     # to create your project app_id. Once is set put it in globus.config app-id field
@@ -57,9 +57,6 @@ def mkdir(args):
     server_id = args.globus_server_uuid
     server_top_dir = args.globus_server_top_dir
 
-    # year_month = args.year_month
-    # pi_last_name = args.pi_last_name
-    # pi_email = args.pi_email
     init_general_PVs(global_PVs)
     year_month = global_PVs['ExperimentYearMonth'].get()
     pi_last_name = global_PVs['UserLastName'].get()
@@ -69,25 +66,19 @@ def mkdir(args):
     args.pi_last_name = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
     args.pi_email = "".join([chr(c) for c in pi_email]).rstrip('\x00')
 
-    # message = args.globus_message
-    # with open (args.globus_message_file, "r") as myfile:
-    #     args.globus_message=myfile.read()
-    # print(args.globus_message)  
-
     log_lib.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+    if globus_lib.create_user_dirs(args, ac, tc):
+        new_dir = args.year_month + '/' + args.pi_last_name
+        log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
 
+        message = args.globus_message
+        with open (args.globus_message_file, "r") as myfile:
+            args.globus_message=myfile.read()
+        log_lib.info('Message to users start:')  
+        log_lib.info('*** %s' % args.globus_message)  
+        log_lib.info('Message to users end')  
 
-    log_lib.info('************ %s' % args.year_month)
-
-    globus_lib.create_dir(args.year_month, args, ac, tc)
-
-    new_dir = args.year_month + '/' + args.pi_last_name
-    globus_lib.create_dir(new_dir, args, ac, tc)
-
-
-    new_dir = args.year_month + '/' + args.pi_last_name
-    log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-    globus_lib.share_dir(new_dir, args, ac, tc)
+        globus_lib.share_dir(new_dir, args, ac, tc)
 
 
 def main():
@@ -105,12 +96,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', **config.SECTIONS['general']['config'])
     show_params = config.GLOBUS_PARAMS
-    mkdir_params = config.GLOBUS_PARAMS
+    email_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
         ('init',        init,           (),                             "Create configuration file"),
         ('show',        show,           show_params,                    "Show endpoints"),
-        ('mkdir',       mkdir,          mkdir_params,                   "Create folder on endpoint"),
+        ('email',       email,          email_params,                   "Create folder on endpoint and send email with link to user"),
 
     ]
 
