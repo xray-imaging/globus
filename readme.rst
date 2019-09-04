@@ -31,7 +31,15 @@ Configuration
 
 Usage
 -----
-    
+
+Once the `DTagging <https://github.com/decarlof/DTagging>`_ medm screen is synchronized with the APS scheduling system:
+
+.. image:: medm_screen.png
+  :width: 400
+  :alt: medm screen
+
+you can run `globus <https://github.com/decarlof/globus>`_  as follows:
+
 globus.py -h for help
         
     globus.py init
