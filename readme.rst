@@ -1,26 +1,34 @@
-Tasks:
+======
+GLOBUS
+======
 
-        - Authenticate with Globus
-        - Create a folder on a Globus server
-        - Share the Globus server folder with a user
-        - Send to the user an email with a link to the shared folder and experiment information
+Tasks
+-----
+    - Authenticate with Globus
+    - Create a folder on a Globus server
+    - Share the Globus server folder with a user
+    - Send to the user an email with the URL to the shared folder
 
-Installation:
+Installation
+------------
 
-        - copy globus.py and globus_lib.py in your working directory
+    - copy globus.py and globus_lib.py in your working directory
 
-Configuration:
+Configuration
+-------------
 
-        - see Step 1 at https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
-          to register your app with Globus and get your project app_id
+    - see Step 1 at https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
+      to register your app with Globus and get your project app_id
 
-        - set your project app-id and personal-endpoint-uuid as default in the config.py file
+    - set your project app-id and personal-endpoint-uuid as default in the config.py file
 
-Usage:
-        globus.py -h for help
+Usage
+-----
+    
+    globus.py -h for help
         
-        globus.py init
-            Creates a globus.conf default file
+    globus.py init
+        Creates a globus.conf default file
 
         globus.py show
             Show all endpoints shared and owned by the active globus credentials 
