@@ -23,8 +23,7 @@ Installation
 Configuration
 -------------
 
-- see Step 1 at https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
- to register your app with Globus and get your project app_id
+- see Step 1 in the `Globus tutorial <https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client>`_ to register your app with Globus and get your project app_id
 - set your project app-id and personal-endpoint-uuid as default in the config.py file
 - customize the email to the user by editing the `message <https://github.com/decarlof/globus/blob/master/message.txt>`_ 
 - for automatic retrieve of user information see `DTagging <https://github.com/decarlof/DTagging>`_ 
