@@ -101,9 +101,24 @@ SECTIONS['globus'] = {
         'default': '/2-BM/',
         'help': "Globus server top directory"}}
 
+SECTIONS['epics'] = {
+    'experiment-year-month': {
+        'default': '2bmS1:ExpInfo:ExperimentYearMonth', 
+        'type': str,
+        'help': "EPICS process variable containing the experiment year and month",
+        'metavar': 'PATH'},
+    'user-email': {
+        'default': '2bmS1:ExpInfo:UserEmail', 
+        'type': str,
+        'help': "EPICS process variable containing the user email address",
+        'metavar': 'PATH'},
+    'user-last-name': {
+        'default': '2bmS1:ExpInfo:UserLastName', 
+        'type': str,
+        'help': "EPICS process variable containing the user last name",
+        'metavar': 'PATH'}}
 
-
-GLOBUS_PARAMS = ('file-io', 'globus', 'experiment')
+GLOBUS_PARAMS = ('file-io', 'globus', 'experiment','epics')
 
 NICE_NAMES = ('General', 'Input')
 

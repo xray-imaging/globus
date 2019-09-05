@@ -24,11 +24,11 @@ __docformat__ = 'restructuredtext en'
 global_PVs = {}
 
 
-def init_general_PVs(global_PVs):
+def init_general_PVs(global_PVs, args):
 
-    global_PVs['ExperimentYearMonth'] = PV('2bmS1:ExpInfo:ExperimentYearMonth')
-    global_PVs['UserEmail'] = PV('2bmS1:ExpInfo:UserEmail')
-    global_PVs['UserLastName'] = PV('2bmS1:ExpInfo:UserLastName')
+    global_PVs['ExperimentYearMonth'] = PV(args.experiment_year_month)
+    global_PVs['UserEmail'] = PV(args.user_email)
+    global_PVs['UserLastName'] = PV(args.user_last_name)
 
 
 def init(args):
@@ -57,11 +57,12 @@ def email(args):
     server_id = args.globus_server_uuid
     server_top_dir = args.globus_server_top_dir
 
-    init_general_PVs(global_PVs)
+    init_general_PVs(global_PVs, args)
     year_month = global_PVs['ExperimentYearMonth'].get()
     pi_last_name = global_PVs['UserLastName'].get()
     pi_email = global_PVs['UserEmail'].get()
     
+    # convert list of chars into string and remove the trail
     args.year_month = "".join([chr(c) for c in year_month]).rstrip('\x00')
     args.pi_last_name = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
     args.pi_email = "".join([chr(c) for c in pi_email]).rstrip('\x00')
