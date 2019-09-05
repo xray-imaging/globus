@@ -24,14 +24,22 @@ Configuration
 -------------
 
 - see Step 1 in the `Globus tutorial <https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client>`_ to register your app with Globus and get your project app_id
-- set your project app-id and personal-endpoint-uuid as default in the config.py file
-- customize the email to the user by editing the `message <https://github.com/decarlof/globus/blob/master/message.txt>`_ 
-- for automatic retrieve of user information see `DTagging <https://github.com/decarlof/DTagging>`_  alternatively you can set year-month, pi_last_name and pi_email as epics PV and configure `init_general_PVs <https://github.com/decarlof/globus/blob/master/globus.py>`_
+- set your project app-id and personal-endpoint-uuid as default in the `config.py <https://github.com/decarlof/globus/blob/master/config.py>`_ file
+- customize the email to the user by editing the `message <https://github.com/decarlof/globus/blob/master/message.txt>`_
+- for automatic retrieve of user information see `DTagging <https://github.com/decarlof/DTagging>`_. Alternatively you can set year-month, pi_last_name and pi_email as epics PV by configuring `init_general_PVs <https://github.com/decarlof/globus/blob/master/globus.py>`_
 
 
 Usage
 -----
-    
+
+Once the `DTagging <https://github.com/decarlof/DTagging>`_ medm screen is synchronized with the APS scheduling system and contains valid values like:
+
+.. image:: medm_screen.png
+  :width: 400
+  :alt: medm screen
+
+you can run `globus <https://github.com/decarlof/globus>`_  as follows:
+
 globus.py -h for help
         
     globus.py init
@@ -45,5 +53,5 @@ globus.py -h for help
 
         - create a directory named "year-month/pi_last_name" on the endpoint
         - share the directory with globus with the user
-        - send a notification to the user with the URL to the shared folder
+        - send a notification to the user with the URL to the shared folder and a user customizable `message <https://github.com/decarlof/globus/blob/master/message.txt>`_
 
