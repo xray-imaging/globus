@@ -5,7 +5,7 @@ GLOBUS
 
 `globus <https://github.com/decarlof/globus>`_ is a python script that automatically creates a directory on a globus server as "year-month/pi_last_name" (or any other preset path) and sends a customizable notification email to "pi_email" that includes the URL to the shared folder.
 
-year-month, pi_last_name and pi_email area automatically retrieved from the APS scheduling system for the current user (see `DTagging <https://github.com/decarlof/DTagging>`_ for more information).
+year-month, pi_last_name and pi_email area automatically retrieved from the APS scheduling system for the current user (see `DTagging <https://github.com/decarlof/DTagging>`_ for more information on how to create and update epics process variables containing user and experiment information using the APS scheduling system).
 
 
 Tasks
@@ -23,10 +23,10 @@ Installation
 Configuration
 -------------
 
-- see Step 1 in the `Globus tutorial <https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client>`_ to register your app with Globus and get your project app_id
+- see step 1 in the `Globus tutorial <https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client>`_ to register your app with Globus and get your project app_id
 - set your project app-id and personal-endpoint-uuid as default in the `config.py <https://github.com/decarlof/globus/blob/master/config.py>`_ file
 - customize the email to the user by editing the `message <https://github.com/decarlof/globus/blob/master/message.txt>`_
-- for automatic retrieve of user information see `DTagging <https://github.com/decarlof/DTagging>`_. Alternatively you can set year-month, pi_last_name and pi_email as epics PV by configuring `init_general_PVs <https://github.com/decarlof/globus/blob/master/globus.py>`_
+- for automatic retrieval of user information from the APS scheduling system see `DTagging <https://github.com/decarlof/DTagging>`_. Alternatively you can set year-month, pi_last_name and pi_email as epics PV by configuring the epics section of the `config <https://github.com/decarlof/globus/blob/master/config.py>`_ file
 
 
 Usage
@@ -55,3 +55,8 @@ globus.py -h for help
         - share the directory with globus with the user
         - send a notification to the user with the URL to the shared folder and a user customizable `message <https://github.com/decarlof/globus/blob/master/message.txt>`_
 
+    globus.py mkdir
+        Using the current user information from the scheduling system:
+
+        - create a directory named "year-month/pi_last_name" on the data collection computer
+        - create a directory named "year-month/pi_last_name" on the data analysis computer

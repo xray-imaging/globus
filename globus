@@ -62,24 +62,30 @@ def email(args):
     pi_last_name = global_PVs['UserLastName'].get()
     pi_email = global_PVs['UserEmail'].get()
     
-    # convert list of chars into string and remove the trail
+    # convert list of chars into string and remove NULL termination
     args.year_month = "".join([chr(c) for c in year_month]).rstrip('\x00')
     args.pi_last_name = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
     args.pi_email = "".join([chr(c) for c in pi_email]).rstrip('\x00')
 
     log_lib.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
-    if globus_lib.create_user_dirs(args, ac, tc):
-        new_dir = args.year_month + '/' + args.pi_last_name
-        log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
 
-        message = args.globus_message
-        with open (args.globus_message_file, "r") as myfile:
-            args.globus_message=myfile.read()
-        log_lib.info('Message to users start:')  
-        log_lib.info('*** %s' % args.globus_message)  
-        log_lib.info('Message to users end')  
+    globus_lib.create_user_dirs(args, ac, tc)
 
-        globus_lib.share_dir(new_dir, args, ac, tc)
+    new_dir = args.year_month + '/' + args.pi_last_name
+    log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
+
+    message = args.globus_message
+    with open (args.globus_message_file, "r") as myfile:
+        args.globus_message=myfile.read()
+    log_lib.info('Message to users start:')  
+    log_lib.info('*** %s' % args.globus_message)  
+    log_lib.info('Message to users end')  
+
+    globus_lib.share_dir(new_dir, args, ac, tc)
+
+def mkdir(args):
+    log_lib.info('Creating data directory on server %s:%s' % (args.detector, args.detector_top_dir))
+    log_lib.info('Creating data directory on server %s:%s' % (args.analysis, args.analysis_top_dir))
 
 
 def main():
@@ -98,11 +104,13 @@ def main():
     parser.add_argument('--config', **config.SECTIONS['general']['config'])
     show_params = config.GLOBUS_PARAMS
     email_params = config.GLOBUS_PARAMS
+    mkdir_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
         ('init',        init,           (),                             "Create configuration file"),
         ('show',        show,           show_params,                    "Show endpoints"),
         ('email',       email,          email_params,                   "Create folder on endpoint and send email with link to user"),
+        ('mkdir',       mkdir,          mkdir_params,                   "Create folder on endpoint and send email with link to user"),
 
     ]
 

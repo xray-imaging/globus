@@ -37,48 +37,12 @@ SECTIONS['experiment'] = {
         'help': "Experiment PI email",
         'metavar': 'FILE'}}
 
-SECTIONS['file-io'] = {
-    'input-file-path': {
-        'default': '.',
-        'type': str,
-        'help': "Name of the last file used",
-        'metavar': 'PATH'},
-    'input-path': {
-        'default': '.',
-        'type': str,
-        'help': "Path of the last used directory",
-        'metavar': 'PATH'},
-    'output-file-path': {
-        'default': '.',
-        'type': str,
-        'help': "Name of the last output file used",
-        'metavar': 'PATH'},
-    'output-path': {
-        'default': '.',
-        'type': str,
-        'help': "Path of the last output used directory",
-        'metavar': 'PATH'},
-
-        }
-
 SECTIONS['globus'] = {
     'app-id': {
         'default': 'a9badd00-39c3-4473-b180-8bccc113ba1d', # for usr32idc
         'type': str,
         'help': "App id UUID, to create one see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client",
         'metavar': 'PATH'},
-    'personal-endpoint-name': {
-        'type': str,
-        'default': 'handyn',
-        'help': "Personal endpoint name"},
-    'personal-endpoint-uuid': {
-        'type': str,
-        'default': 'f1f39c62-ec26-11e8-8cab-0a1d4c5c824a', # for petrel#tomography
-        'help': "Personal endpoint UUID"},
-    'personal-endpoint-top-dir': {
-        'type': str,
-        'default': '/local/data/',
-        'help': "Personal endpoint top directory"},
     'globus-server-name': {
         'type': str,
         'default': 'petrel',
@@ -101,6 +65,32 @@ SECTIONS['globus'] = {
         'default': '/2-BM/',
         'help': "Globus server top directory"}}
 
+SECTIONS['local'] = {
+    'analysis': {
+        'type': str,
+        'default': 'handyn',
+        'help': "Computer running the data analysis"},
+    'analysis-user-name': {
+        'type': str,
+        'default': 'tomo',
+        'help': "User name to access the data analysis computer"},
+    'analysis-top-dir': {
+        'type': str,
+        'default': '/local/data/',
+        'help': "raw data top directory"},
+    'detector': {
+        'type': str,
+        'default': 'pg10ge',
+        'help': "Computer controlling the detector where the raw data are stored"},
+    'detector-user-name': {
+        'type': str,
+        'default': 'user2bmb',
+        'help': "User name to access the computer controlling the detector"},
+    'detector-top-dir': {
+        'type': str,
+        'default': '/local/data/',
+        'help': "raw data top directory"}}
+
 SECTIONS['epics'] = {
     'experiment-year-month': {
         'default': '2bmS1:ExpInfo:ExperimentYearMonth', 
@@ -118,7 +108,7 @@ SECTIONS['epics'] = {
         'help': "EPICS process variable containing the user last name",
         'metavar': 'PATH'}}
 
-GLOBUS_PARAMS = ('file-io', 'globus', 'experiment','epics')
+GLOBUS_PARAMS = ('globus', 'local', 'experiment','epics')
 
 NICE_NAMES = ('General', 'Input')
 
