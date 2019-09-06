@@ -12,7 +12,7 @@ import config
 import globus_lib
 import log_lib
 import pv_lib
-
+import dm_lib
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
@@ -63,14 +63,20 @@ def email(args):
     log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
     globus_lib.share_dir(new_dir, args, ac, tc)
 
-def mkdir(args):
+def dirs(args):
 
+    args.year_month, args.pi_last_name, args.pi_email = pv_lib.update_experiment_info(args)
 
-    log_lib.info('Creating data directory on server %s:%s' % (args.detector, args.detector_top_dir))
-    dm_lib.scp(global_PVs, variableDict)
-    log_lib.info('Creating data directory on server %s:%s' % (args.analysis, args.analysis_top_dir))
-    dm_lib.scp(global_PVs, variableDict)
+    # create directory on detector computer
+    remote_server = args.detector_user_name + '@' + args.detector
+    remote_dir = args.detector_top_dir + args.year_month + '/' + args.pi_last_name + '/'
+    dm_lib.mkdir(remote_server, remote_dir)
 
+    # create directory on data alysis computer
+    remote_server = args.analysis_user_name + '@' + args.analysis
+    remote_dir = args.analysis_top_dir + args.year_month + '/' + args.pi_last_name + '/'
+    dm_lib.mkdir(remote_server, remote_dir)
+ 
 
 def main():
     home = os.path.expanduser("~")
@@ -88,13 +94,13 @@ def main():
     parser.add_argument('--config', **config.SECTIONS['general']['config'])
     show_params = config.GLOBUS_PARAMS
     email_params = config.GLOBUS_PARAMS
-    mkdir_params = config.GLOBUS_PARAMS
+    dirs_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
         ('init',        init,           (),                             "Create configuration file"),
         ('show',        show,           show_params,                    "Show endpoints"),
         ('email',       email,          email_params,                   "Create folder on endpoint and send email with link to user"),
-        ('mkdir',       mkdir,          mkdir_params,                   "Create folder on endpoint and send email with link to user"),
+        ('dirs',        dirs,           dirs_params,                    "Create folders on data collection and data analysis computers"),
 
     ]
 
