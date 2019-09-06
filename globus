@@ -45,6 +45,19 @@ def show(args):
     ac, tc = globus_lib.create_clients(app_id)
     globus_lib.show_endpoints(args, ac, tc)
 
+def experiment_info(args):
+
+    init_general_PVs(global_PVs, args)
+    year_month = global_PVs['ExperimentYearMonth'].get()
+    pi_last_name = global_PVs['UserLastName'].get()
+    pi_email = global_PVs['UserEmail'].get()
+    
+    # convert list of chars into string and remove NULL termination
+    year_month_str = "".join([chr(c) for c in year_month]).rstrip('\x00')
+    pi_last_name_str = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
+    pi_email_str = "".join([chr(c) for c in pi_email]).rstrip('\x00')
+
+    return year_month_str, pi_last_name_str, pi_email_str
 
 def email(args):
 
@@ -54,18 +67,9 @@ def email(args):
     ac, tc = globus_lib.create_clients(app_id)
     globus_lib.show_endpoints(args, ac, tc)
 
-    server_id = args.globus_server_uuid
     server_top_dir = args.globus_server_top_dir
 
-    init_general_PVs(global_PVs, args)
-    year_month = global_PVs['ExperimentYearMonth'].get()
-    pi_last_name = global_PVs['UserLastName'].get()
-    pi_email = global_PVs['UserEmail'].get()
-    
-    # convert list of chars into string and remove NULL termination
-    args.year_month = "".join([chr(c) for c in year_month]).rstrip('\x00')
-    args.pi_last_name = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
-    args.pi_email = "".join([chr(c) for c in pi_email]).rstrip('\x00')
+    args.year_month, args.pi_last_name, args.pi_email = experiment_info(args)
 
     log_lib.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
 
@@ -84,8 +88,12 @@ def email(args):
     globus_lib.share_dir(new_dir, args, ac, tc)
 
 def mkdir(args):
+
+
     log_lib.info('Creating data directory on server %s:%s' % (args.detector, args.detector_top_dir))
+    dm_lib.scp(global_PVs, variableDict)
     log_lib.info('Creating data directory on server %s:%s' % (args.analysis, args.analysis_top_dir))
+    dm_lib.scp(global_PVs, variableDict)
 
 
 def main():
