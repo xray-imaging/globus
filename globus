@@ -7,28 +7,17 @@ import logging
 import time
 import re
 from datetime import datetime
-from epics import PV
 
 import config
 import globus_lib
 import log_lib
-
+import pv_lib
 
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
 __version__ = "0.0.1"
 __docformat__ = 'restructuredtext en'
-
-
-global_PVs = {}
-
-
-def init_general_PVs(global_PVs, args):
-
-    global_PVs['ExperimentYearMonth'] = PV(args.experiment_year_month)
-    global_PVs['UserEmail'] = PV(args.user_email)
-    global_PVs['UserLastName'] = PV(args.user_last_name)
 
 
 def init(args):
@@ -45,19 +34,6 @@ def show(args):
     ac, tc = globus_lib.create_clients(app_id)
     globus_lib.show_endpoints(args, ac, tc)
 
-def experiment_info(args):
-
-    init_general_PVs(global_PVs, args)
-    year_month = global_PVs['ExperimentYearMonth'].get()
-    pi_last_name = global_PVs['UserLastName'].get()
-    pi_email = global_PVs['UserEmail'].get()
-    
-    # convert list of chars into string and remove NULL termination
-    year_month_str = "".join([chr(c) for c in year_month]).rstrip('\x00')
-    pi_last_name_str = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
-    pi_email_str = "".join([chr(c) for c in pi_email]).rstrip('\x00')
-
-    return year_month_str, pi_last_name_str, pi_email_str
 
 def email(args):
 
@@ -69,15 +45,13 @@ def email(args):
 
     server_top_dir = args.globus_server_top_dir
 
-    args.year_month, args.pi_last_name, args.pi_email = experiment_info(args)
+    args.year_month, args.pi_last_name, args.pi_email = pv_lib.experiment_info(args)
 
     log_lib.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
 
     globus_lib.create_user_dirs(args, ac, tc)
 
-    new_dir = args.year_month + '/' + args.pi_last_name
-    log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-
+    # Pull custom email text from file
     message = args.globus_message
     with open (args.globus_message_file, "r") as myfile:
         args.globus_message=myfile.read()
@@ -85,6 +59,8 @@ def email(args):
     log_lib.info('*** %s' % args.globus_message)  
     log_lib.info('Message to users end')  
 
+    new_dir = args.year_month + '/' + args.pi_last_name
+    log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
     globus_lib.share_dir(new_dir, args, ac, tc)
 
 def mkdir(args):
