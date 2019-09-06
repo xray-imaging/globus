@@ -79,7 +79,7 @@ def create_user_dirs(args,
       log_lib.info('*** Created folder: %s' % pi_last_name_dir_path)
       return True
     except:
-      log_lib.warning('*** Path %s or %s already exists and shared with %s' % (date_dir_path, pi_last_name_dir_path, args.pi_email))
+      log_lib.warning('*** Path %s or %s already exists' % (date_dir_path, pi_last_name_dir_path))
       return False
 
 
