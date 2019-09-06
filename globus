@@ -45,7 +45,7 @@ def email(args):
 
     server_top_dir = args.globus_server_top_dir
 
-    args.year_month, args.pi_last_name, args.pi_email = pv_lib.experiment_info(args)
+    args.year_month, args.pi_last_name, args.pi_email = pv_lib.update_experiment_info(args)
 
     log_lib.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
 

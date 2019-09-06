@@ -11,7 +11,7 @@ def init_general_PVs(args):
 
     return global_PVs
 
-def experiment_info(args):
+def update_experiment_info(args):
 
     global_PVs = init_general_PVs(args)
     year_month = global_PVs['ExperimentYearMonth'].get()
