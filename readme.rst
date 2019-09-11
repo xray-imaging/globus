@@ -60,3 +60,5 @@ globus.py -h for help
 
         - create a directory named "year-month/pi_last_name" on the data collection computer
         - create a directory named "year-month/pi_last_name" on the data analysis computer
+
+        data collection and data analysis machines need to be configured in the local section of the `config <https://github.com/decarlof/globus/blob/master/config.py>`_ file. The directory creation requires ssh access to the data collection and data analysis machines, if prefered not to use a password see `SSH login without password <http://www.linuxproblem.org/art_9.html>`_.
