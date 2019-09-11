@@ -55,7 +55,7 @@ globus.py -h for help
         - share the directory with globus with the user
         - send a notification to the user with the URL to the shared folder and a user customizable `message <https://github.com/decarlof/globus/blob/master/message.txt>`_
 
-    globus.py mkdir
+    globus.py dirs
         Using the current user information from the scheduling system:
 
         - create a directory named "year-month/pi_last_name" on the data collection computer
