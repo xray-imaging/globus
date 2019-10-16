@@ -42,8 +42,8 @@ def create_clients(app_id):
   log_lib.warning('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
 
   get_input = getattr(__builtins__, 'raw_input', input)
-  # auth_code = get_input('Please enter the code you get after login here: ').strip() # pythn 3
-  auth_code = raw_input('Please enter the code you get after login here: ').strip() # python 2.7
+  auth_code = get_input('Please enter the code you get after login here: ').strip() # pythn 3
+  # auth_code = raw_input('Please enter the code you get after login here: ').strip() # python 2.7
   
   token_response = client.oauth2_exchange_code_for_tokens(auth_code)
 
