@@ -18,6 +18,11 @@ Tasks
 Installation
 ------------
 
+Install the following::
+
+    pip install globus-sdk 
+    pip install paramiko
+
 - copy the content of `globus <https://github.com/decarlof/globus>`_ in your working directory
 
 Configuration
