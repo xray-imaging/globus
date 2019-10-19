@@ -1,5 +1,6 @@
 import log_lib
 import globus_sdk
+# from globus_sdk import  
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
@@ -73,14 +74,20 @@ def create_user_dirs(args,
     pi_last_name_dir_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
 
     try:
-      response = tc.operation_mkdir(args.globus_server_uuid, path=date_dir_path)
-      log_lib.info('*** Created folder: %s' % date_dir_path)
-      response = tc.operation_mkdir(args.globus_server_uuid, path=pi_last_name_dir_path)
-      log_lib.info('*** Created folder: %s' % pi_last_name_dir_path)
-      return True
+        response = tc.operation_mkdir(args.globus_server_uuid, path=date_dir_path)
+        log_lib.info('*** Created folder: %s' % date_dir_path)
     except:
-      log_lib.warning('*** Path %s or %s already exists' % (date_dir_path, pi_last_name_dir_path))
-      return False
+        log_lib.warning('*** Path %s ' % date_dir_path)
+        # log_lib.warning('*** Path %s or %s already exists' % (date_dir_path, pi_last_name_dir_path))
+
+    try:
+        response = tc.operation_mkdir(args.globus_server_uuid, path=pi_last_name_dir_path)
+        log_lib.info('*** Created folder: %s' % pi_last_name_dir_path)
+        return True
+    # except: globus_sdk.ExternalError:
+    except:
+        log_lib.warning('*** Path %s ' % pi_last_name_dir_path)
+        return False
 
 
 def create_dir(directory,       # Subdirectory name under top to be created
@@ -106,8 +113,11 @@ def share_dir(directory,      # Subdirectory name under top to be shared with us
 
     # Generate user id from user email
     r = ac.get_identities(usernames=args.pi_email)
+    print(args.pi_email)
+    print(r)
+	
     user_id = r['identities'][0]['id']
-    # log_lib.info(r, user_id)
+    log_lib.info(r, user_id)
 
     directory_full_path = args.globus_server_top_dir + directory + '/'
     # Set access control and notify user
@@ -121,12 +131,13 @@ def share_dir(directory,      # Subdirectory name under top to be shared with us
       'notify_message': args.globus_message
     }
 
-    try: 
-      response = tc.add_endpoint_acl_rule(args.globus_server_uuid, rule_data)
-      log_lib.info('*** Path %s has been shared with %s' % (directory_full_path, args.pi_email))
-      return True
-    except:
-      log_lib.warning('*** Path %s is already shared with %s' % (directory_full_path, args.pi_email))
-      return False
+    
+    # try: 
+    response = tc.add_endpoint_acl_rule(args.globus_server_uuid, rule_data)
+    log_lib.info('*** Path %s has been shared with %s' % (directory_full_path, args.pi_email))
+    #   return True
+    # except:
+    #   log_lib.warning('*** Path %s is already shared with %s' % (directory_full_path, args.pi_email))
+    #   return False
 
 
