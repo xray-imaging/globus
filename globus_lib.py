@@ -65,24 +65,6 @@ def create_clients(app_id):
   return ac, tc
 
 
-# def create_user_dirs(args,
-#                     ac,              # Authorize client  
-#                     tc):             # Transfer client
-
-#     date_dir_path = args.globus_server_top_dir + args.year_month + '/'
-#     pi_last_name_dir_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
-
-#     try:
-#       response = tc.operation_mkdir(args.globus_server_uuid, path=date_dir_path)
-#       log_lib.info('*** Created folder: %s' % date_dir_path)
-#       response = tc.operation_mkdir(args.globus_server_uuid, path=pi_last_name_dir_path)
-#       log_lib.info('*** Created folder: %s' % pi_last_name_dir_path)
-#       return True
-#     except:
-#       log_lib.warning('*** Path %s or %s already exists' % (date_dir_path, pi_last_name_dir_path))
-#       return False
-
-
 def create_user_dirs(args,
                     ac,              # Authorize client  
                     tc):             # Transfer client
