@@ -8,7 +8,7 @@ __docformat__ = 'restructuredtext en'
 
 __all__ = ['create_clients',
            'create_dir',
-           'share_dir']
+           'share_globus_dir']
 
 def show_endpoints(args, ac, tc):
 
@@ -65,7 +65,7 @@ def create_clients(app_id):
   return ac, tc
 
 
-def create_user_dirs(args,
+def create_globus_dir(args,
                     ac,              # Authorize client  
                     tc):             # Transfer client
 
@@ -103,8 +103,7 @@ def create_dir(directory,       # Subdirectory name under top to be created
       return False
 
 
-def share_dir(directory,      # Subdirectory name under top to be shared with user email address
-              args,
+def share_globus_dir(args,
               ac,             # Authorize client  
               tc):            # Transfer client
 
@@ -113,7 +112,7 @@ def share_dir(directory,      # Subdirectory name under top to be shared with us
     user_id = r['identities'][0]['id']
     # log_lib.info(r, user_id)
 
-    directory_full_path = args.globus_server_top_dir + directory + '/'
+    directory_full_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
     # Set access control and notify user
     rule_data = {
       'DATA_TYPE': 'access',

@@ -56,7 +56,7 @@ SECTIONS['globus'] = {
         'default': 'Notification Message to user',
         'help': "Globus server UUID"},
     'globus-message-file': {
-        'default': 'message.txt',
+        'default': '/local/user2bmb/conda/globus/message.txt',
         'type': str,
         'help': "File name of the notification message to user",
         'metavar': 'FILE'},
@@ -108,7 +108,20 @@ SECTIONS['epics'] = {
         'help': "EPICS process variable containing the user last name",
         'metavar': 'PATH'}}
 
+SECTIONS['email'] = {
+    'schedule': {
+        'default': False,
+        'help': 'Set to True to send and email to all users listed in the current proposal',
+        'action': 'store_true'},
+    'support-email': {
+        'default': 'decarlof@gmail.com',
+        'type': str,
+        'help': "Beamline scientist email",
+        'metavar': 'FILE'}}
+
+
 GLOBUS_PARAMS = ('globus', 'local', 'experiment','epics')
+EMAIL_PARAMS = ('email', 'globus', 'epics')
 
 NICE_NAMES = ('General', 'Input')
 
