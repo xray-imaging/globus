@@ -107,9 +107,13 @@ def share_globus_dir(args,
               ac,             # Authorize client  
               tc):            # Transfer client
 
-    # Generate user id from user email
+    # Query to Auth Client to verify if a globus user ID is associated to the user email address, if not one is generated
+    response = ac.get("/v2/api/identities?usernames="+args.pi_email)
+
+    # Get user id from user email
     r = ac.get_identities(usernames=args.pi_email)
     user_id = r['identities'][0]['id']
+    print(user_id)
     # log_lib.info(r, user_id)
 
     directory_full_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
