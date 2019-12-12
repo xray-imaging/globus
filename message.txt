@@ -15,9 +15,8 @@ https://2bm-ops.readthedocs.io/
 hdfview https://support.hdfgroup.org/products/java/hdfview/
 argos (https://github.com/titusjan/argos)
 
-- reconstruction scripts:
-look for the PI last name under:
-https://github.com/decarlof/util/tree/master/
+- reconstruction scripts find_center and recon are available at:
+https://github.com/decarlof/bin_utils
 
 To run the reconstruction script you need to install tomopy:
 https://tomopy.readthedocs.io/
@@ -27,4 +26,4 @@ The content of these links will update during the experiment and will be availab
 If you have some interesting/challenging data set that you would like to share with the community submit a pull request at:
 https://tomobank.readthedocs.io
 
-the 2-BM team
+The 2-BM Team
