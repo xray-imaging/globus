@@ -39,16 +39,18 @@ def show(args):
 
 def email(args):
 
-    if args.schedule:
-        users = sch.get_users()
-        emails = sch.find_emails(users,exclude_pi=False)
-        emails.append(args.support_email)
-        for email in emails:
-            log_lib.info('Sharing %s with %s' % (args.globus_server_top_dir, email))
-            # log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, email))
+    # # For testing only
+    # if args.schedule:
+    #     users = sch.get_users()
+    #     emails = sch.find_emails(users,exclude_pi=False)
+    #     emails.append(args.support_primary_email)
+    #     emails.append(args.support_secondary_email)
+    #     for email in emails:
+    #         log_lib.info('Sharing %s with %s' % (args.globus_server_top_dir, email))
+    #         # log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, email))
 
-    # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
-    # to create your project app_id. Once is set put it in globus.config app-id field
+    # # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
+    # # to create your project app_id. Once is set put it in globus.config app-id field
     app_id = args.app_id
     ac, tc = globus_lib.create_clients(app_id)
     globus_lib.show_endpoints(args, ac, tc)
@@ -73,7 +75,8 @@ def email(args):
     if args.schedule:
         users = sch.get_users()
         emails = sch.find_emails(users,exclude_pi=False)
-        emails.append(args.support_email)
+        emails.append(args.support_primary_email)
+        emails.append(args.support_secondary_email)
         for email in emails:
             args.pi_email = email
             log_lib.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))

@@ -113,8 +113,13 @@ SECTIONS['email'] = {
         'default': False,
         'help': 'Set to True to send and email to all users listed in the current proposal',
         'action': 'store_true'},
-    'support-email': {
-        'default': 'decarlof@gmail.com',
+    'support-primary-email': {
+        'default': 'pshevchenko@anl.gov',
+        'type': str,
+        'help': "Beamline scientist email",
+        'metavar': 'FILE'},
+    'support-secondary-email': {
+        'default': 'decarlo@anl.gov',
         'type': str,
         'help': "Beamline scientist email",
         'metavar': 'FILE'}}
