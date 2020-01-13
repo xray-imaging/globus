@@ -16,7 +16,7 @@ hdfview https://support.hdfgroup.org/products/java/hdfview/
 argos (https://github.com/titusjan/argos)
 
 - reconstruction scripts find_center and recon are available at:
-https://github.com/decarlof/bin_utils
+https://github.com/tomography/tomopy-cli
 
 To run the reconstruction script you need to install tomopy:
 https://tomopy.readthedocs.io/
