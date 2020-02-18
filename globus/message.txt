@@ -4,7 +4,7 @@ All,
 we are ready to start data collection, at the end of this message you will find the URL to access the raw and reconstructed data.
 We ask you to download and make a copy of the data (raw with a backup) within 4 weeks. After that time the data will be deleted from our systems, if you need more time please send an email to Francesco at decarlo@anl.gov or Pavel at pshevchenko@anl.gov
 
-To download data from the APS you need to create a globus account at https://www.globus.org/
+To download data from the APS you need to create a globus account at https://www.globus.org/ using the very same email address listed here.
 Please read https://docs2bm.readthedocs.io/en/latest/source/manual/item_007.html 
 for more information
 
