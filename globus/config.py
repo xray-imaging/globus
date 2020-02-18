@@ -3,7 +3,8 @@ import sys
 import configparser
 from collections import OrderedDict
 import numpy as np
-import log_lib
+
+from globus import log
 
 
 NAME = "globus.conf"
@@ -256,8 +257,8 @@ def log_values(args):
         entries = sorted((k for k in args.keys() if k in SECTIONS[section]))
 
         if entries:
-            log_lib.info(name)
+            log.info(name)
 
             for entry in entries:
                 value = args[entry] if args[entry] is not None else "-"
-                log_lib.info("  {:<16} {}".format(entry, value))
+                log.info("  {:<16} {}".format(entry, value))
