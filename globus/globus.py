@@ -113,7 +113,7 @@ def share_globus_dir(args,
     # Get user id from user email
     r = ac.get_identities(usernames=args.pi_email)
     user_id = r['identities'][0]['id']
-    log.info(r, user_id)
+    # log.info(r, user_id)
 
     directory_full_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
     # Set access control and notify user
