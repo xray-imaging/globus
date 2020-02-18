@@ -1,4 +1,4 @@
-import log_lib
+from globus import log
 import globus_sdk
 
 __author__ = "Francesco De Carlo"
@@ -12,13 +12,13 @@ __all__ = ['create_clients',
 
 def show_endpoints(args, ac, tc):
 
-    log_lib.info('Show all endpoints shared and owned by my globus user credentials')
-    log_lib.info("*** Endpoints shared with me:")
+    log.info('Show all endpoints shared and owned by my globus user credentials')
+    log.info("*** Endpoints shared with me:")
     for ep in tc.endpoint_search(filter_scope="shared-with-me"):
-        log_lib.info("*** *** [{}] {}".format(ep["id"], ep["display_name"]))
-    log_lib.info("*** Endpoints owned with me::")
+        log.info("*** *** [{}] {}".format(ep["id"], ep["display_name"]))
+    log.info("*** Endpoints owned with me::")
     for ep in tc.endpoint_search(filter_scope="my-endpoints"):
-         log_lib.info("*** *** [{}] {}".format(ep["id"], ep["display_name"]))
+         log.info("*** *** [{}] {}".format(ep["id"], ep["display_name"]))
 
 
 def create_clients(app_id):
@@ -39,7 +39,7 @@ def create_clients(app_id):
   client = globus_sdk.NativeAppAuthClient(app_id)
   client.oauth2_start_flow(refresh_tokens=True)
 
-  log_lib.warning('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
+  log.warning('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
 
   get_input = getattr(__builtins__, 'raw_input', input)
   auth_code = get_input('Please enter the code you get after login here: ').strip() # pythn 3
@@ -74,16 +74,16 @@ def create_globus_dir(args,
 
     try:
       response = tc.operation_mkdir(args.globus_server_uuid, path=date_dir_path)
-      log_lib.info('*** Created folder: %s' % date_dir_path)
+      log.info('*** Created folder: %s' % date_dir_path)
     except:
-      log_lib.warning('*** Path %s already exists' % (date_dir_path))
+      log.warning('*** Path %s already exists' % (date_dir_path))
 
     try:
       response = tc.operation_mkdir(args.globus_server_uuid, path=pi_last_name_dir_path)
-      log_lib.info('*** Created folder: %s' % pi_last_name_dir_path)
+      log.info('*** Created folder: %s' % pi_last_name_dir_path)
       return True
     except:
-      log_lib.warning('*** Path %s already exists' % (pi_last_name_dir_path))
+      log.warning('*** Path %s already exists' % (pi_last_name_dir_path))
       return False
 
 
@@ -96,10 +96,10 @@ def create_dir(directory,       # Subdirectory name under top to be created
 
     try:
       response = tc.operation_mkdir(args.globus_server_uuid, path=new_dir_path)
-      log_lib.info('*** Created folder: %s' % new_dir_path)
+      log.info('*** Created folder: %s' % new_dir_path)
       return True
     except:
-      log_lib.warning('*** Path %s already exists' % new_dir_path)
+      log.warning('*** Path %s already exists' % new_dir_path)
       return False
 
 
@@ -113,7 +113,7 @@ def share_globus_dir(args,
     # Get user id from user email
     r = ac.get_identities(usernames=args.pi_email)
     user_id = r['identities'][0]['id']
-    log_lib.info(r, user_id)
+    # log.info(r, user_id)
 
     directory_full_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
     # Set access control and notify user
@@ -129,10 +129,10 @@ def share_globus_dir(args,
 
     try: 
       response = tc.add_endpoint_acl_rule(args.globus_server_uuid, rule_data)
-      log_lib.info('*** Path %s has been shared with %s' % (directory_full_path, args.pi_email))
+      log.info('*** Path %s has been shared with %s' % (directory_full_path, args.pi_email))
       return True
     except:
-      log_lib.warning('*** Path %s is already shared with %s' % (directory_full_path, args.pi_email))
+      log.warning('*** Path %s is already shared with %s' % (directory_full_path, args.pi_email))
       return False
 
 
