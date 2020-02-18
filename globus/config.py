@@ -1,18 +1,20 @@
-import argparse
+import os
 import sys
+import pathlib
+import argparse
 import configparser
-from collections import OrderedDict
 import numpy as np
 
+from collections import OrderedDict
 from globus import log
 
+CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
 
-NAME = "globus.conf"
 SECTIONS = OrderedDict()
 
 SECTIONS['general'] = {
     'config': {
-        'default': NAME,
+        'default': CONFIG_FILE_NAME,
         'type': str,
         'help': "File name of configuration",
         'metavar': 'FILE'},
@@ -133,7 +135,7 @@ NICE_NAMES = ('General', 'Input')
 
 def get_config_name():
     """Get the command line --config option."""
-    name = NAME
+    name = CONFIG_FILE_NAME
     for i, arg in enumerate(sys.argv):
         if arg.startswith('--config'):
             if arg == '--config':
@@ -164,7 +166,7 @@ def parse_known_args(parser, subparser=False):
     return parser.parse_known_args(values)[0]
 
 
-def config_to_list(config_name=NAME):
+def config_to_list(config_name=CONFIG_FILE_NAME):
     """
     Read arguments from config file and convert them to a list of keys and
     values as sys.argv does when they are specified on the command line.
