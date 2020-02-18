@@ -22,10 +22,12 @@ Installation
 
 Install the following::
 
-    pip install globus-sdk 
-    pip install paramiko
+    $ pip install globus-sdk 
+    $ pip install paramiko
+    $ git clone https://github.com/xray-imaging/globus.git
+    $ cd globus 
+    $ python setup.py install
 
-- copy the content of `globus <https://github.com/xray-imaging/globus>`_ in your working directory
 
 Configuration
 -------------
