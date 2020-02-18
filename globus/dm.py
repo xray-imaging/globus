@@ -44,40 +44,41 @@ def create_remote_directory(remote_server, remote_dir):
         return -1
 
 
-def scp(global_PVs, variableDict):
+# this is not used by globus.
+# def scp(global_PVs, variableDict):
 
-    log.info(' ')
-    log.info('  *** Data transfer')
+#     log.info(' ')
+#     log.info('  *** Data transfer')
 
-    remote_server = variableDict['RemoteAnalysisDir'].split(':')[0]
-    remote_top_dir = variableDict['RemoteAnalysisDir'].split(':')[1]
-    log.info('      *** remote server: %s' % remote_server)
-    log.info('      *** remote top directory: %s' % remote_top_dir)
+#     remote_server = variableDict['RemoteAnalysisDir'].split(':')[0]
+#     remote_top_dir = variableDict['RemoteAnalysisDir'].split(':')[1]
+#     log.info('      *** remote server: %s' % remote_server)
+#     log.info('      *** remote top directory: %s' % remote_top_dir)
 
-    fname_origin = global_PVs['HDF1_FullFileName_RBV'].get(as_string=True)
-    p = pathlib.Path(fname_origin)
-    fname_destination = variableDict['RemoteAnalysisDir'] + p.parts[-3] + '/' + p.parts[-2] + '/'
-    remote_dir = remote_top_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
+#     fname_origin = global_PVs['HDF1_FullFileName_RBV'].get(as_string=True)
+#     p = pathlib.Path(fname_origin)
+#     fname_destination = variableDict['RemoteAnalysisDir'] + p.parts[-3] + '/' + p.parts[-2] + '/'
+#     remote_dir = remote_top_dir + p.parts[-3] + '/' + p.parts[-2] + '/'
 
-    log.info('      *** origin: %s' % fname_origin)
-    log.info('      *** destination: %s' % fname_destination)
-    # log.info('      *** remote directory: %s' % remote_dir)
+#     log.info('      *** origin: %s' % fname_origin)
+#     log.info('      *** destination: %s' % fname_destination)
+#     # log.info('      *** remote directory: %s' % remote_dir)
 
-    ret = check_remote_directory(remote_server, remote_dir)
+#     ret = check_remote_directory(remote_server, remote_dir)
 
-    if ret == 0:
-        os.system('scp -q ' + fname_origin + ' ' + fname_destination + '&')
-        log.info('  *** Data transfer: Done!')
-        return 0
-    elif ret == 2:
-        iret = create_remote_directory(remote_server, remote_dir)
-        if iret == 0: 
-            os.system('scp -q ' + fname_origin + ' ' + fname_destination + '&')
-        log.info('  *** Data transfer: Done!')
-        return 0
-    else:
-        log.error('  *** Quitting the copy operation')
-        return -1
+#     if ret == 0:
+#         os.system('scp -q ' + fname_origin + ' ' + fname_destination + '&')
+#         log.info('  *** Data transfer: Done!')
+#         return 0
+#     elif ret == 2:
+#         iret = create_remote_directory(remote_server, remote_dir)
+#         if iret == 0: 
+#             os.system('scp -q ' + fname_origin + ' ' + fname_destination + '&')
+#         log.info('  *** Data transfer: Done!')
+#         return 0
+#     else:
+#         log.error('  *** Quitting the copy operation')
+#         return -1
 
 
 def mkdir(remote_server, remote_dir):
