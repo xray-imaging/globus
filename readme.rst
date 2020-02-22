@@ -49,22 +49,22 @@ Once the `DTagging <https://github.com/xray-imaging/DTagging>`_ medm screen is s
 
 you can run `globus <https://github.com/xray-imaging/globus>`_  as follows:
 
-globus.py -h for help
+globus -h for help
         
-    globus.py init
+    globus init
         Creates a globus.conf default file
 
-    globus.py show
+    globus show
         Show all endpoints shared and owned by the active globus credentials 
 
-    globus.py email
+    globus email
         Using the current user information from the scheduling system:
 
         - create a directory named "year-month/pi_last_name" on the endpoint
         - share the directory with globus with the user
         - send a notification to the user with the URL to the shared folder and a user customizable `message <https://github.com/xray-imaging/globus/blob/master/message.txt>`_
 
-    globus.py dirs
+    globus dirs
         Using the current user information from the scheduling system:
 
         - create a directory named "year-month/pi_last_name" on the data collection computer
