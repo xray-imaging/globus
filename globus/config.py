@@ -9,6 +9,7 @@ from collections import OrderedDict
 from globus import log
 
 CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
+MESSAGE_FILE_NAME = os.path.join(Path(__file__).parent, 'message.txt')
 
 SECTIONS = OrderedDict()
 
@@ -59,7 +60,7 @@ SECTIONS['globus'] = {
         'default': 'Notification Message to user',
         'help': "Globus server UUID"},
     'globus-message-file': {
-        'default': '/local/user2bmb/conda/globus/message.txt',
+        'default': MESSAGE_FILE_NAME,
         'type': str,
         'help': "File name of the notification message to user",
         'metavar': 'FILE'},
