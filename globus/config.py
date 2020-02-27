@@ -4,12 +4,11 @@ import pathlib
 import argparse
 import configparser
 import numpy as np
-
 from collections import OrderedDict
 from globus import log
 
 CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
-MESSAGE_FILE_NAME = os.path.join(Path(__file__).parent, 'message.txt')
+MESSAGE_FILE_NAME = os.path.join(pathlib.Path(__file__).parent, 'message.txt')
 
 SECTIONS = OrderedDict()
 
