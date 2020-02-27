@@ -1,0 +1,154 @@
+#!/local/user2bmb/Software/anaconda/bin/python
+# -*- coding: utf-8 -*-
+import os
+import sys
+import argparse
+import logging
+import time
+import re
+from datetime import datetime
+
+import dmagic.scheduling as sch
+
+from globus import config
+from globus import globus
+from globus import log
+from globus import pv
+from globus import dm
+
+__author__ = "Francesco De Carlo"
+__copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
+__version__ = "0.0.1"
+__docformat__ = 'restructuredtext en'
+
+
+def init(args):
+    if not os.path.exists(str(args.config)):
+        config.write(str(args.config))
+    else:
+        raise RuntimeError("{0} already exists".format(args.config))
+
+
+def show(args):
+    # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
+    # to create your project app_id. Once is set put it in globus.config app-id field
+    app_id = args.app_id
+    ac, tc = globus.create_clients(app_id)
+    globus.show_endpoints(args, ac, tc)
+
+
+def email(args):
+
+    # # For testing only
+    # if args.schedule:
+    #     users = sch.get_users()
+    #     emails = sch.find_emails(users,exclude_pi=False)
+    #     emails.append(args.support_primary_email)
+    #     emails.append(args.support_secondary_email)
+    #     for email in emails:
+    #         log.info('Sharing %s with %s' % (args.globus_server_top_dir, email))
+    #         # log.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, email))
+
+    # # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
+    # # to create your project app_id. Once is set put it in globus.config app-id field
+    app_id = args.app_id
+    ac, tc = globus.create_clients(app_id)
+    globus.show_endpoints(args, ac, tc)
+
+    # server_top_dir = args.globus_server_top_dir
+
+    args.year_month, args.pi_last_name, args.pi_email = pv.update_experiment_info(args)
+
+    log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+    globus.create_globus_dir(args, ac, tc)
+
+    # Pull custom email text from file
+    message = args.globus_message
+    with open (args.globus_message_file, "r") as myfile:
+        args.globus_message=myfile.read()
+    log.info('Message to users start:')  
+    log.info('*** %s' % args.globus_message)  
+    log.info('Message to users end')  
+
+    new_dir = args.year_month + '/' + args.pi_last_name
+
+    if args.schedule:
+        users = sch.get_users()
+        emails = sch.find_emails(users,exclude_pi=False)
+        emails.append(args.support_primary_email)
+        emails.append(args.support_secondary_email)
+        for email in emails:
+            args.pi_email = email
+            log.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
+            globus.share_globus_dir(args, ac, tc)
+    else:
+        log.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
+        globus.share_globus_dir(args, ac, tc)
+
+
+def dirs(args):
+
+    args.year_month, args.pi_last_name, args.pi_email = pv.update_experiment_info(args)
+
+    # create directory on detector computer
+    remote_server = args.detector_user_name + '@' + args.detector
+    remote_dir = args.detector_top_dir + args.year_month + '/' + args.pi_last_name + '/'
+    dm.mkdir(remote_server, remote_dir)
+
+    # create directory on data alysis computer
+    remote_server = args.analysis_user_name + '@' + args.analysis
+    remote_dir = args.analysis_top_dir + args.year_month + '/' + args.pi_last_name + '/'
+    dm.mkdir(remote_server, remote_dir)
+ 
+
+def main():
+    home = os.path.expanduser("~")
+    logs_home = home + '/logs/'
+
+    # make sure logs directory exists
+    if not os.path.exists(logs_home):
+        os.makedirs(logs_home)
+
+    lfname = logs_home + 'globus_' + datetime.strftime(datetime.now(), "%Y-%m-%d_%H:%M:%S") + '.log'
+    log.setup_custom_logger(lfname)
+
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', **config.SECTIONS['general']['config'])
+    show_params = config.GLOBUS_PARAMS
+    email_params = config.EMAIL_PARAMS
+    dirs_params = config.GLOBUS_PARAMS
+
+    cmd_parsers = [
+        ('init',        init,           (),                             "Create configuration file"),
+        ('show',        show,           show_params,                    "Show endpoints"),
+        ('email',       email,          email_params,                   "Create folder on endpoint and send email with link to user"),
+        ('dirs',        dirs,           dirs_params,                    "Create folders on data collection and data analysis computers"),
+
+    ]
+
+    subparsers = parser.add_subparsers(title="Commands", metavar='')
+
+    for cmd, func, sections, text in cmd_parsers:
+        cmd_params = config.Params(sections=sections)
+        cmd_parser = subparsers.add_parser(cmd, help=text, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        cmd_parser = cmd_params.add_arguments(cmd_parser)
+        cmd_parser.set_defaults(_func=func)
+
+    args = config.parse_known_args(parser, subparser=True)
+  
+    try:
+        # load args from default (config.py) if not changed
+        config.log_values(args)
+        args._func(args)
+        # undate globus.config file
+        sections = config.GLOBUS_PARAMS
+        config.write(args.config, args=args, sections=sections)
+    except RuntimeError as e:
+        log.error(str(e))
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
+
