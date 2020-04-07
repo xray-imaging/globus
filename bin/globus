@@ -41,8 +41,8 @@ def email(args):
 
     # # For testing only
     # if args.schedule:
-    #     users = scheduling.get_users()
-    #     emails = scheduling.find_emails(users,exclude_pi=False)
+    #     users = scheduling.get_users(args)
+    #     emails = scheduling.find_emails(users, exclude_pi=False)
     #     emails.append(args.support_primary_email)
     #     emails.append(args.support_secondary_email)
     #     for email in emails:
@@ -74,7 +74,7 @@ def email(args):
 
     if args.schedule:
         users = scheduling.get_users(args)
-        emails = scheduling.find_emails(users,exclude_pi=False)
+        emails = scheduling.find_emails(users, exclude_pi=False)
         emails.append(args.support_primary_email)
         emails.append(args.support_secondary_email)
         for email in emails:

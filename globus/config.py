@@ -156,7 +156,7 @@ SECTIONS['email'] = {
 
 
 GLOBUS_PARAMS = ('scheduling', 'globus', 'local', 'experiment','epics')
-EMAIL_PARAMS = ('email', 'globus', 'epics')
+EMAIL_PARAMS = ('scheduling', 'email', 'globus', 'epics')
 
 NICE_NAMES = ('General', 'Input')
 
