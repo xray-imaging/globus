@@ -80,10 +80,10 @@ def email(args):
         for email in emails:
             args.pi_email = email
             log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-            # globus.share_globus_dir(args, ac, tc)
+            globus.share_globus_dir(args, ac, tc)
     else:
         log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-        # globus.share_globus_dir(args, ac, tc)
+        globus.share_globus_dir(args, ac, tc)
 
 
 def dirs(args):
