@@ -8,7 +8,7 @@ import time
 import re
 from datetime import datetime
 
-import dmagic.scheduling as sch
+from dmagic import scheduling
 
 from globus import config
 from globus import globus
@@ -41,8 +41,8 @@ def email(args):
 
     # # For testing only
     # if args.schedule:
-    #     users = sch.get_users()
-    #     emails = sch.find_emails(users,exclude_pi=False)
+    #     users = scheduling.get_users()
+    #     emails = scheduling.find_emails(users,exclude_pi=False)
     #     emails.append(args.support_primary_email)
     #     emails.append(args.support_secondary_email)
     #     for email in emails:
@@ -73,17 +73,17 @@ def email(args):
     new_dir = args.year_month + '/' + args.pi_last_name
 
     if args.schedule:
-        users = sch.get_users()
-        emails = sch.find_emails(users,exclude_pi=False)
+        users = scheduling.get_users(args)
+        emails = scheduling.find_emails(users,exclude_pi=False)
         emails.append(args.support_primary_email)
         emails.append(args.support_secondary_email)
         for email in emails:
             args.pi_email = email
-            log.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-            globus.share_globus_dir(args, ac, tc)
+            log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
+            # globus.share_globus_dir(args, ac, tc)
     else:
-        log.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-        globus.share_globus_dir(args, ac, tc)
+        log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
+        # globus.share_globus_dir(args, ac, tc)
 
 
 def dirs(args):
