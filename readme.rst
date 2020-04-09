@@ -71,3 +71,14 @@ globus -h for help
         - create a directory named "year-month/pi_last_name" on the data analysis computer
 
         data collection and data analysis machines need to be configured in the local section of the `config <https://github.com/xray-imaging/globus/blob/master/config.py>`_ file. The directory creation requires ssh access to the data collection and data analysis machines, if prefered not to use a password see `SSH login without password <http://www.linuxproblem.org/art_9.html>`_.
+        
+        
+Examples
+--------
+
+::
+
+    $ globus dirs
+    $ globus email --schedule
+
+Note: globus email will send the email notification with the globus share only to the PI as listed in the medm screen (using the PV value), with the additional --schedule option the notification is sent to all users listed in the proposal.
