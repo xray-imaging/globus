@@ -10,10 +10,6 @@ from globus import log
 CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
 MESSAGE_FILE_NAME = os.path.join(pathlib.Path(__file__).parent, 'message.txt')
 
-USERNAME = '123456'
-PASSWORD = 'password'
-BEAMLINE = "2-BM-A,B"
-
 SECTIONS = OrderedDict()
 
 SECTIONS['general'] = {
@@ -28,24 +24,8 @@ SECTIONS['general'] = {
         'action': 'store_true'}}
 
 SECTIONS['scheduling'] = {
-    'username' : {
-        'default': USERNAME,
-        'type': str,
-        'help': "scheduling system username (badge #)"},
-    'password' : {
-        'default': PASSWORD,
-        'type': str,
-        'help': "scheduling system password"},
-    'internal' : {
-        'default' : "https://schedule.aps.anl.gov:8443/beamschedds/springws/",
-        'type': str,
-        'help': "File name of configuration"},
-    'external' : {
-        'default' : "https://schedule.aps.anl.gov/beamschedds/springws/",
-        'type': str,
-        'help': "scheduling system hosts"},
     'beamline' : {
-        'default' : BEAMLINE,
+        'default' : '7-BM-A,B',
         'type': str,
         'help': "beam line"},
     }
@@ -68,41 +48,36 @@ SECTIONS['experiment'] = {
         'metavar': 'FILE'}}
 
 SECTIONS['globus'] = {
-    'app-id': {
-        'default': 'a9badd00-39c3-4473-b180-8bccc113ba1d', # for usr32idc
+    'experiment-type': {
         'type': str,
-        'help': "App id UUID, to create one see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client",
-        'metavar': 'PATH'},
-    'globus-server-name': {
-        'type': str,
-        'default': 'petrel',
-        'help': "Globus server name"},
-    'globus-server-uuid': {
-        'type': str,
-        'default': 'e133a81a-6d04-11e5-ba46-22000b92c6ec', # petrel tomography
-        'help': "Globus server UUID"},
+        'default': '7BM',
+        'help': 'Experiment type in the DM system'},
+    'primary-beamline-contact-badge': {
+        'type': int,
+        'default': 56788,
+        'help': 'Badge name of primary beamline contact.  Added to all DM experiments'},
     'globus-message': {
         'type': str,
-        'default': 'Notification Message to user',
-        'help': "Globus server UUID"},
+        'default': 'IMPORTANT: Data access details',
+        'help': "User e-mail subject line"},
     'globus-message-file': {
         'default': MESSAGE_FILE_NAME,
         'type': str,
-        'help': "File name of the notification message to user",
+        'help': "File name of the notification e-mail message to user",
         'metavar': 'FILE'},
     'globus-server-top-dir': {
         'type': str,
-        'default': '/2-BM/',
+        'default': '/dm/',
         'help': "Globus server top directory"}}
 
 SECTIONS['local'] = {
     'analysis': {
         'type': str,
-        'default': 'handyn',
+        'default': 'mach',
         'help': "Computer running the data analysis"},
     'analysis-user-name': {
         'type': str,
-        'default': 'tomo',
+        'default': '7bmb',
         'help': "User name to access the data analysis computer"},
     'analysis-top-dir': {
         'type': str,
@@ -110,33 +85,54 @@ SECTIONS['local'] = {
         'help': "raw data top directory"},
     'detector': {
         'type': str,
-        'default': 'pg10ge',
+        'default': 'prandtl',
         'help': "Computer controlling the detector where the raw data are stored"},
     'detector-user-name': {
         'type': str,
-        'default': 'user2bmb',
+        'default': '7bmb',
         'help': "User name to access the computer controlling the detector"},
     'detector-top-dir': {
         'type': str,
         'default': '/local/data/',
-        'help': "raw data top directory"}}
+        'help': "raw data top directory"},
+    }
+
 
 SECTIONS['epics'] = {
+    'pv_prefix' : {
+        'default' : '7bmb1:',
+        'type': str,
+        'help': "IOC prefix for PVs:"},
+    'scan_prefix' : {
+        'default' : 'ExpInfo:',
+        'type': str,
+        'help': "scan prefix for PVs:"},
     'experiment-year-month': {
-        'default': '2bmS1:ExpInfo:ExperimentYearMonth', 
+        'default': 'ExperimentYearMonth', 
         'type': str,
         'help': "EPICS process variable containing the experiment year and month",
         'metavar': 'PATH'},
     'user-email': {
-        'default': '2bmS1:ExpInfo:UserEmail', 
+        'default': 'UserEmail', 
         'type': str,
         'help': "EPICS process variable containing the user email address",
         'metavar': 'PATH'},
     'user-last-name': {
-        'default': '2bmS1:ExpInfo:UserLastName', 
+        'default': 'UserLastName', 
         'type': str,
         'help': "EPICS process variable containing the user last name",
-        'metavar': 'PATH'}}
+        'metavar': 'PATH'},
+    'GUP-number': {
+        'default': 'ProposalNumber',
+        'type': str,
+        'help': 'EPICS PV containing the proposal number',
+        'metavar': 'PATH'},
+    'GUP-desc': {
+        'default': 'ProposalTitle',
+        'type': str,
+        'help': 'EPICS PV containing the proposal title',
+        'metavar': 'PATH'},
+    }
 
 SECTIONS['email'] = {
     'schedule': {
@@ -144,12 +140,12 @@ SECTIONS['email'] = {
         'help': 'Set to True to send and email to all users listed in the current proposal',
         'action': 'store_true'},
     'support-primary-email': {
-        'default': 'pshevchenko@anl.gov',
+        'default': 'akastengren@anl.gov',
         'type': str,
         'help': "Beamline scientist email",
         'metavar': 'FILE'},
     'support-secondary-email': {
-        'default': 'decarlo@anl.gov',
+        'default': 'akastengren@anl.gov',
         'type': str,
         'help': "Beamline scientist email",
         'metavar': 'FILE'}}
