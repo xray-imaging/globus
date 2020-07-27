@@ -6,6 +6,8 @@ import argparse
 import logging
 import time
 import re
+import smtplib
+from email.message import EmailMessage
 from datetime import datetime
 
 from dmagic import scheduling
@@ -42,54 +44,44 @@ def email(args):
     with information on how to get their data from Voyager.
     '''
     year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
-    username_list = voyager_setup.make_username_list(args)
-    email_list = []
+    email_list = voyager_setup.make_user_email_list(args)
     
-    log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
-    globus.create_globus_dir(args, ac, tc)
+    with open(args.globus_message_file, 'r') as mess_file:
+        msg = EmailMessage()
+        msg.set_content(mess_file.read())
 
-    # Pull custom email text from file
-    message = args.globus_message
-    with open (args.globus_message_file, "r") as myfile:
-        args.globus_message=myfile.read()
     log.info('Message to users start:')  
     log.info('*** %s' % args.globus_message)  
     log.info('Message to users end')  
 
-    new_dir = args.year_month + '/' + args.pi_last_name
-
-    if args.schedule:
-        users = scheduling.get_users(args)
-        emails = scheduling.find_emails(users, exclude_pi=False)
-        emails.append(args.support_primary_email)
-        emails.append(args.support_secondary_email)
-        for email in emails:
-            args.pi_email = email
-            log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-            globus.share_globus_dir(args, ac, tc)
-    else:
-        log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-        globus.share_globus_dir(args, ac, tc)
+    msg['From'] = args.support-primary-email
+    msg['Subject'] = 'Important information on APS experiment'
+    s = smtplib.SMTP('localhost')
+    for em in email_list:
+        msg['To'] = em
+        log.info('Sending informational message to {:s}'.format(em))
+        s.send_message(msg)
+    s.quit()
 
 
 def dirs(args):
-
-    args.year_month, args.pi_last_name, args.pi_email = pv.update_experiment_info(args)
-
     # create directory on detector computer
+    log.info('Making directory on the detector computer {:s}'.format(args.detector))
+    detector_dir_name = directories.create_detector_dir_name(args)
     remote_server = args.detector_user_name + '@' + args.detector
-    remote_dir = args.detector_top_dir + args.year_month + '/' + args.pi_last_name + '/'
-    dm.mkdir(remote_server, remote_dir)
+    directories.mkdir(remote_server, detector_dir_name)
 
-    # create directory on data alysis computer
+    # create directory on data analysis computer
+    log.info('Making directory on the analysis computer {:s}'.format(args.analysis))
+    analysis_dir_name = directories.create_analysis_dir_name(args)
     remote_server = args.analysis_user_name + '@' + args.analysis
-    remote_dir = args.analysis_top_dir + args.year_month + '/' + args.pi_last_name + '/'
-    dm.mkdir(remote_server, remote_dir)
+    directories.mkdir(remote_server, analysis_dir_name)
  
 
 def user_init(args):
     '''Initiate actions for the start of an experiment.
     * Create an experiment in the DM system.
+    * Add users to this experiment
     '''
     new_exp = voyager_setup.create_dm_experiment(args)
     user_list = voyager_setup.make_username_list(args)
@@ -102,6 +94,12 @@ def start_daq(args):
     voyager_setup.start_dm_daq(args)
 
     
+def stop_daq(args):
+    '''Stop the Data Management DAQ set up for this experiment.
+    '''
+    voyager_setup.start_dm_daq(args)
+
+
 def main():
     home = os.path.expanduser("~")
     logs_home = home + '/logs/'
@@ -125,8 +123,9 @@ def main():
         ('show',        show,           show_params,                    "Show endpoints"),
         ('email',       email,          email_params,                   "Create folder on endpoint and send email with link to user"),
         ('dirs',        dirs,           dirs_params,                    "Create folders on data collection and data analysis computers"),
-        ('user_init',   user_init,          email_params,                   "Initialize experiment"),
-        ('start_daq',   start_daq,          dirs_params,                   "Initialize DM DAQ"),
+        ('user_init',   user_init,      email_params,                   "Initialize experiment"),
+        ('start_daq',   start_daq,      dirs_params,                   "Initialize DM DAQ"),
+        ('stop_daq',    stop_daq,       dirs_params,                   "Stop DM DAQ"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')

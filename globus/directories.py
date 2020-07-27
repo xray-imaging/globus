@@ -27,6 +27,14 @@ def create_analysis_dir_name(args):
     return str(analysis_path)
 
 
+def create_detector_dir_name(args):
+    exp_name = make_directory_name(args)
+    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
+    detector_path = Path(args.detector_top_dir).joinpath(year_month,exp_name)
+    log.info('Directory on analysis machine: {:s}'.format(str(detector_path)))
+    return str(detector_path)
+
+
 def check_remote_directory(remote_server, remote_dir):
     try:
         rcmd = 'ls ' + remote_dir
@@ -46,7 +54,12 @@ def check_remote_directory(remote_server, remote_dir):
 
 
 def create_remote_directory(remote_server, remote_dir):
-    cmd = 'mkdir -p ' + remote_dir
+    '''Command to create directories on the remote machine.
+    This will create all necessary parent directories.
+    This was originally called with 'mkdir -p', but this will not
+    set the created parent directories to the right permissions.
+    '''
+    cmd = 'mkdir -m 777 ' + remote_dir
     try:
         # log.info('      *** sending command %s' % (cmd))
         log.info('      *** creating remote directory %s' % (remote_dir))
@@ -60,9 +73,16 @@ def create_remote_directory(remote_server, remote_dir):
 
 
 def mkdir(remote_server, remote_dir):
-
+    '''Command to create directories on the remote machine.
+    This will create all necessary parent directories.
+    This was originally called with 'mkdir -p', but this will not
+    set the created parent directories to the right permissions.
+    '''
     log.info('Creating directory on server %s:%s' % (remote_server, remote_dir))
-    ret = check_remote_directory(remote_server , remote_dir)
-    if ret == 2:
-        iret = create_remote_directory(remote_server, remote_dir)
-
+    path_parts = Path(remote_dir).parts
+    parent_path = Path(path_parts[0])
+    for p in path_parts[1:]:
+        parent_path = parent_path.joinpath(p)
+        ret = check_remote_directory(remote_server , str(parent_path))
+        if ret == 2:
+            iret = create_remote_directory(remote_server, str(parent_path))
