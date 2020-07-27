@@ -31,14 +31,6 @@ def init(args):
         raise RuntimeError("{0} already exists".format(args.config))
 
 
-def show(args):
-    # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
-    # to create your project app_id. Once is set put it in globus.config app-id field
-    app_id = args.app_id
-    ac, tc = globus.create_clients(app_id)
-    globus.show_endpoints(args, ac, tc)
-
-
 def email(args):
     '''Sends an email to all users on the current proposal
     with information on how to get their data from Voyager.
@@ -54,11 +46,15 @@ def email(args):
     log.info('*** %s' % args.globus_message)  
     log.info('Message to users end')  
 
-    msg['From'] = args.support-primary-email
+    msg['From'] = args.support_primary_email
     msg['Subject'] = 'Important information on APS experiment'
     s = smtplib.SMTP('localhost')
     for em in email_list:
-        msg['To'] = em
+        log.info(msg['To'])
+        if msg['To'] is None:
+            msg['To'] = em
+        else:
+            msg.replace_header('To',em)
         log.info('Sending informational message to {:s}'.format(em))
         s.send_message(msg)
     s.quit()
@@ -120,8 +116,7 @@ def main():
 
     cmd_parsers = [
         ('init',        init,           (),                             "Create configuration file"),
-        ('show',        show,           show_params,                    "Show endpoints"),
-        ('email',       email,          email_params,                   "Create folder on endpoint and send email with link to user"),
+        ('email',       email,          email_params,                   "Send email with link to all users on proposal"),
         ('dirs',        dirs,           dirs_params,                    "Create folders on data collection and data analysis computers"),
         ('user_init',   user_init,      email_params,                   "Initialize experiment"),
         ('start_daq',   start_daq,      dirs_params,                   "Initialize DM DAQ"),
