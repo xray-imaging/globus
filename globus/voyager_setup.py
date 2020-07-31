@@ -12,18 +12,14 @@ user_api = dm.UserDsApi()
 daq_api = dm.ExperimentDaqApi()
 oee = dm.common.exceptions.objectAlreadyExists.ObjectAlreadyExists
 
-__author__ = "Francesco De Carlo"
-__copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
+__author__ = "Alan L Kastengren"
+__copyright__ = "Copyright (c) 2020, UChicago Argonne, LLC."
 __version__ = "0.0.1"
 __docformat__ = 'restructuredtext en'
 
-__all__ = ['create_clients',
-           'create_dir',
-           'share_globus_dir']
 
-
-def make_username_list(args):
-    '''Set up a DM experiment to store data on Voyager.
+def make_proposal_username_list(args):
+    '''Make a list of DM usernames for the current proposal.
     '''
     log.info('Making a list of DM system usernames from target proposal')
     year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
@@ -38,16 +34,35 @@ def make_username_list(args):
     return user_ids
 
 
-def make_user_email_list(args):
-    username_list = make_username_list(args)
+def make_exp_username_list(args):
+    '''Make a list of the usernames from the current DM experiment.
+    '''
+    log.info('Making a list of DM system usernames from current DM experiment')
+    exp_name = directories.make_directory_name(args)
+    try:
+        exp_obj = exp_api.getExperimentByName(exp_name)
+        return exp_obj['experimentUsernameList']
+    except:
+        log.error('No such experiment in the DM system: {:s}'.format(exp_name))
+        log.error('   Have you run globus user_init yet?')
+        return []
+
+
+def make_user_email_list(username_list):
+    '''Make a list of e-mail addresses for a list of DM usernames.
+    Input
+    list of DM usernames, each of which is in the form 'd12345'
+    Returns:
+    list of e-mail addresses.
+    '''
     email_list = []
     for u in username_list:
         try:
             user_obj = user_api.getUserByUsername(u)
             email_list.append(user_obj['email'])
-            log.info('Added email {:s} for user {:s}'.format(email_list[-1], u))
+            log.info('   Added email {:s} for user {:s}'.format(email_list[-1], u))
         except:
-            log.warning('Problem loading email for user {:s}'.format(u))
+            log.warning('   Problem loading email for user {:s}'.format(u))
     return email_list
         
 
@@ -63,7 +78,7 @@ def create_dm_experiment(args):
     log.info('See if there is already a DM experiment')
     try:
         old_exp = exp_api.getExperimentByName(dir_name)
-        log.warning('Experiment already exists')
+        log.warning('   Experiment already exists')
         return old_exp 
     except:
         log.info('Creating new DM experiment: {0:s}/{1:s}'.format(year_month, dir_name))
@@ -134,10 +149,14 @@ def stop_dm_daq(args):
     exp_name = directories.make_directory_name(args)
     log.info('Stopping all DM DAQs for experiment {:s}'.format(exp_name))
     daqs = daq_api.listDaqs()
+    removed_daq_counter = 0
     for d in daqs:
         if d['experimentName'] == exp_name and d['status'] == 'running':
             log.info('   Found running DAQ for this experiment.  Stopping now.')
             daq_api.stopDaq(d['experimentName'],d['dataDirectory'])
+            removed_daq_counter += 1
+    if removed_daq_counter == 0:
+        log.info('   No active DAQs for this experiment were found')
 
 
 def add_user(args):
@@ -145,9 +164,25 @@ def add_user(args):
     try:
         exp_obj = exp_api.getExperimentByName(exp_name)
     except:
-        log.error('No appropriate experiment found.')
+        log.error('   No appropriate experiment found.')
         return
-    experiment_add_users(exp_obj, ['d{:d}'.format(args.addl_user_badge)])
+    experiment_add_users(exp_obj, ['d{:d}'.format(args.edit_user_badge)])
+
+
+def remove_user(args):
+    '''Remvoe a user from the DM experiment.
+    '''
+    exp_name = directories.make_directory_name(args)
+    dm_username = 'd{:d}'.format(args.edit_user_badge)
+    user_to_remove = user_api.getUserByUsername(dm_username)
+    log.info('Removing user {0:s} from experiment {1:s}'.format(
+                make_pretty_user_name(user_to_remove), exp_name))
+    try:
+        exp_obj = exp_api.getExperimentByName(exp_name)
+    except:
+        log.error('    No appropriate experiment found.')
+        return
+    user_api.deleteUserExperimentRole(dm_username, 'User', exp_name)
 
 
 def list_users(args):
@@ -158,7 +193,7 @@ def list_users(args):
     try:
         exp_obj = exp_api.getExperimentByName(exp_name)
     except:
-        log.error('No appropriate experiment found.')
+        log.error('   No appropriate experiment found.')
         return
     username_list = exp_obj['experimentUsernameList']
     if len(username_list) == 0:
@@ -166,8 +201,8 @@ def list_users(args):
         return
     for uname in username_list:
         user_obj = user_api.getUserByUsername(uname)
-        log.info('   User {0:s} is on the DM experiment'.format(
-                    make_pretty_user_name(user_obj)))
+        log.info('   User {0:s}, badge {1:s} is on the DM experiment'.format(
+                    make_pretty_user_name(user_obj), user_obj['badge']))
 
 
 def make_pretty_user_name(user_obj):

@@ -3,60 +3,50 @@ GLOBUS
 ======
 
 
-`globus <https://github.com/xray-imaging/globus>`_ is a python script that automatically creates a directory on a globus server as "year-month/pi_last_name" (or any other preset path) and sends a customizable notification email to the "pi_email" that includes the URL to the shared folder.
+`globus <https://github.com/aps-7bm/globus/tree/voyager>`_ is a Python script that interfaced with the APS Data Management System.  It reads beamline PVs to set up a Data Management experiment, create directories on the data acquisition and analysis machines, manage users for the experiment, send e-mails to users with information on how to get their data from Voyager, and manage automated data transfer (termed DAQs) from the analysis machine to Voyager.
 The notification email can be sent to all users listed in the beamline schedule by using the --schedule option.
 
 year-month, pi_last_name and pi_email area automatically retrieved from the APS scheduling system for the current user (see `DTagging <https://github.com/xray-imaging/DTagging>`_ for more information on how to create and update epics process variables containing user and experiment information using the APS scheduling system).
 
-
-Tasks
------
-- Authenticate with Globus
-- Create a folder on a Globus server
-- Share the Globus server folder with a user
-- Send to the user an email with the URL to the shared folder
-- Using the --schedule options share and email is sent to all users listed in current beamline schedule
 
 Installation
 ------------
 
 Install the following::
 
-    $ pip install globus-sdk 
-    $ pip install paramiko
-    $ git clone https://github.com/xray-imaging/globus.git
+    $ git clone https://github.com/aps-7bm/globus.git
     $ cd globus 
+    $ git checkout voyager
     $ python setup.py install
 
 
 Configuration
 -------------
 
-- see step 1 in the `Globus tutorial <https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client>`_ to register your app with Globus and get your project app_id
-- set your project app-id and personal-endpoint-uuid as default in the `config.py <https://github.com/xray-imaging/globus/blob/master/config.py>`_ file
 - customize the email to the user by editing the `message <https://github.com/xray-imaging/globus/blob/master/message.txt>`_
-- for automatic retrieval of user information from the APS scheduling system see `DTagging <https://github.com/xray-imaging/DTagging>`_. Alternatively you can set year-month, pi_last_name and pi_email as epics PV by configuring the epics section of the `config <https://github.com/xray-imaging/globus/blob/master/config.py>`_ file
+- for automatic retrieval of user information from the APS scheduling system see `DMagic <https://github.com/aps-7bm/DMagic/tree/dm>`_. Alternatively you can set year-month, pi_last_name and pi_email as epics PV by configuring the epics section of the `config <https://github.com/xray-imaging/globus/blob/master/config.py>`_ file
 
 
 Usage
 -----
 
-Once the `DTagging <https://github.com/xray-imaging/DTagging>`_ medm screen is synchronized with the APS scheduling system and contains valid values like:
+Once the DMagic medm screen is synchronized with the APS scheduling system and contains valid values like:
 
 .. image:: medm_screen.png
   :width: 400
   :alt: medm screen
 
-you can run `globus <https://github.com/xray-imaging/globus>`_  as follows:
+you can run globus as follows:
 
 globus -h for help
         
     globus init
         Creates a globus.conf default file
 
-    globus show
-        Show all endpoints shared and owned by the active globus credentials 
+    globus user_init 
+        Reads the PV data, creates a DM experiment, and adds users from the proposal to the experiment 
 
+    globus dirs
     globus email
         Using the current user information from the scheduling system:
 

@@ -32,30 +32,32 @@ def init(args):
 
 
 def email(args):
-    '''Sends an email to all users on the current proposal
+    '''Sends an email to all users on the current experiment 
     with information on how to get their data from Voyager.
     '''
-    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
-    email_list = voyager_setup.make_user_email_list(args)
-    
+    log.info('Sending e-mail to users on the DM experiment')
+    username_list = voyager_setup.make_exp_username_list(args)
+    email_list = voyager_setup.make_user_email_list(username_list)
+    if len(email_list) == 0:
+        log.warning('   No valid e-mail addresses')
+        return
     with open(args.globus_message_file, 'r') as mess_file:
         msg = EmailMessage()
         msg.set_content(mess_file.read())
 
-    log.info('Message to users start:')  
-    log.info('*** %s' % args.globus_message)  
-    log.info('Message to users end')  
+    log.info('   Message to users start:')  
+    log.info('   *** %s' % args.globus_message)  
+    log.info('   Message to users end')  
 
     msg['From'] = args.support_primary_email
     msg['Subject'] = 'Important information on APS experiment'
     s = smtplib.SMTP('localhost')
     for em in email_list:
-        log.info(msg['To'])
         if msg['To'] is None:
             msg['To'] = em
         else:
             msg.replace_header('To',em)
-        log.info('Sending informational message to {:s}'.format(em))
+        log.info('   Sending informational message to {:s}'.format(em))
         s.send_message(msg)
     s.quit()
 
@@ -80,7 +82,7 @@ def user_init(args):
     * Add users to this experiment
     '''
     new_exp = voyager_setup.create_dm_experiment(args)
-    user_list = voyager_setup.make_username_list(args)
+    user_list = voyager_setup.make_proposal_username_list(args)
     log.info('Adding users from the current proposal to the DM experiment.')
     voyager_setup.experiment_add_users(new_exp, user_list)
 
@@ -99,6 +101,10 @@ def stop_daq(args):
 
 def add_user(args):
     voyager_setup.add_user(args)
+
+
+def remove_user(args):
+    voyager_setup.remove_user(args)
 
 
 def list_users(args):
@@ -132,6 +138,7 @@ def main():
         ('stop_daq',    stop_daq,       dirs_params,                   "Stop DM DAQ"),
         ('add_user',    add_user,       dirs_params,                   "Add a user to the DM experiment by badge number"),
         ('list_users',  list_users,     dirs_params,                   "List the users on the current experiment"),
+        ('remove_user', remove_user,    dirs_params,                   "Remove a user from the DM experiment by badge number"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')
