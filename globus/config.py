@@ -65,10 +65,10 @@ SECTIONS['globus'] = {
         'type': str,
         'help': "File name of the notification e-mail message to user",
         'metavar': 'FILE'},
-    'globus-server-top-dir': {
-        'type': str,
-        'default': '/dm/',
-        'help': "Globus server top directory"}}
+    'addl-user-badge': {
+        'type': int,
+        'help': 'Badge number of user to be added to the experiment.'},
+    } 
 
 SECTIONS['local'] = {
     'analysis': {

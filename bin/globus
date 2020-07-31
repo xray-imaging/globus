@@ -81,6 +81,7 @@ def user_init(args):
     '''
     new_exp = voyager_setup.create_dm_experiment(args)
     user_list = voyager_setup.make_username_list(args)
+    log.info('Adding users from the current proposal to the DM experiment.')
     voyager_setup.experiment_add_users(new_exp, user_list)
 
 
@@ -93,7 +94,15 @@ def start_daq(args):
 def stop_daq(args):
     '''Stop the Data Management DAQ set up for this experiment.
     '''
-    voyager_setup.start_dm_daq(args)
+    voyager_setup.stop_dm_daq(args)
+
+
+def add_user(args):
+    voyager_setup.add_user(args)
+
+
+def list_users(args):
+    voyager_setup.list_users(args)
 
 
 def main():
@@ -121,6 +130,8 @@ def main():
         ('user_init',   user_init,      email_params,                   "Initialize experiment"),
         ('start_daq',   start_daq,      dirs_params,                   "Initialize DM DAQ"),
         ('stop_daq',    stop_daq,       dirs_params,                   "Stop DM DAQ"),
+        ('add_user',    add_user,       dirs_params,                   "Add a user to the DM experiment by badge number"),
+        ('list_users',  list_users,     dirs_params,                   "List the users on the current experiment"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')
