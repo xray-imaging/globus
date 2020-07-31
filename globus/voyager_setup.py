@@ -166,15 +166,22 @@ def add_user(args):
     except:
         log.error('   No appropriate experiment found.')
         return
-    experiment_add_users(exp_obj, ['d{:d}'.format(args.edit_user_badge)])
-
+    try:
+        experiment_add_users(exp_obj, ['d{:d}'.format(args.edit_user_badge)])
+    except:
+        log.error('   Problem adding the user.  Check the badge number')
+    
 
 def remove_user(args):
     '''Remvoe a user from the DM experiment.
     '''
     exp_name = directories.make_directory_name(args)
     dm_username = 'd{:d}'.format(args.edit_user_badge)
-    user_to_remove = user_api.getUserByUsername(dm_username)
+    try:
+        user_to_remove = user_api.getUserByUsername(dm_username)
+    except:
+        log.error('   Problem retrieving user information.  Check the badge number')
+        return
     log.info('Removing user {0:s} from experiment {1:s}'.format(
                 make_pretty_user_name(user_to_remove), exp_name))
     try:
@@ -182,7 +189,10 @@ def remove_user(args):
     except:
         log.error('    No appropriate experiment found.')
         return
-    user_api.deleteUserExperimentRole(dm_username, 'User', exp_name)
+    try:
+        user_api.deleteUserExperimentRole(dm_username, 'User', exp_name)
+    except:
+        log.error('   Problem removing the user.  Check the badge number')
 
 
 def list_users(args):

@@ -38,7 +38,7 @@ Once the DMagic medm screen is synchronized with the APS scheduling system and c
 
 you can run globus as follows:
 
-globus -h for help
+    globus -h for help
         
     globus init
         Creates a globus.conf default file
@@ -47,28 +47,37 @@ globus -h for help
         Reads the PV data, creates a DM experiment, and adds users from the proposal to the experiment 
 
     globus dirs
+        Checks for directories on the analysis and detector computers and creates them, as needed
+
     globus email
-        Using the current user information from the scheduling system:
+        E-mails all users on an experiment with information on how to access their data on Voyager
 
-        - create a directory named "year-month/pi_last_name" on the endpoint
-        - share the directory with globus with the user
-        - send a notification to the user with the URL to the shared folder and a user customizable `message <https://github.com/xray-imaging/globus/blob/master/globus/message.txt>`_
+    globus start_daq
+        Starts automated file upload from the analysis computer to Voyager
+    
+    globus stop_daq
+        Stops automated file uploads for this experiment
 
-    globus dirs
-        Using the current user information from the scheduling system:
+    globus add_user --edit-user-badge 123456
+        Adds the user with the badge 123456 to the experiment
 
-        - create a directory named "year-month/pi_last_name" on the data collection computer
-        - create a directory named "year-month/pi_last_name" on the data analysis computer
+    globus list_users
+        Lists the users (name and badge numbers) that are part of the DM experiment
+
+    globus remove_user --edit-user-badge 123456
+        Removes the user with badge 123456 from the experiment
 
         data collection and data analysis machines need to be configured in the local section of the `config <https://github.com/xray-imaging/globus/blob/master/config.py>`_ file. The directory creation requires ssh access to the data collection and data analysis machines, if prefered not to use a password see `SSH login without password <http://www.linuxproblem.org/art_9.html>`_.
         
         
-Examples
+Typical Workflow
 --------
 
 ::
 
+    $ globus user_init
     $ globus dirs
-    $ globus email --schedule
-
-Note: globus email will send the email notification with the globus share only to the PI as listed in the medm screen (using the PV value), with the additional --schedule option the notification is sent to all users listed in the proposal.
+    $ globus list_users
+    $ globus add_user --edit-user-badge 123456
+    $ globus remove_user --edit-user-badge 987654 
+    $ globus email 
