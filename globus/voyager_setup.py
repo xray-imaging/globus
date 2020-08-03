@@ -226,3 +226,17 @@ def make_pretty_user_name(user_obj):
     if 'lastName' in user_obj:
         output_string += user_obj['lastName']
     return output_string
+
+
+def make_email_link(args):
+    '''Makes the link to give to users so they can access their data directly.
+    '''
+    exp_name = directories.make_directory_name(args)
+    target_exp = exp_api.getExperimentByName(exp_name)
+    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
+    output_link = 'https://app.globus.org/file-manager?origin_id='
+    output_link += args.globus_endpoint_id
+    output_link += '&origin_path='
+    target_dir = args.globus_beamline_root + '/' + year_month + '/' + exp_name + '/\n'
+    output_link += target_dir.replace('/','%2F') 
+    return output_link

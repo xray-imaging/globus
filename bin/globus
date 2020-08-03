@@ -41,9 +41,18 @@ def email(args):
     if len(email_list) == 0:
         log.warning('   No valid e-mail addresses')
         return
+    #Add in the actual data link to the message
     with open(args.globus_message_file, 'r') as mess_file:
+        temp_mess_file = mess_file.readlines()
+    with open(args.globus_message_file, 'w') as mess_file2:
+        for line in temp_mess_file:
+            if line.startswith('Data link:'):
+                line = 'Data link: {:s}'.format(voyager_setup.make_email_link(args))
+            mess_file2.write(line)
+
+    with open(args.globus_message_file, 'r') as mess_file3:        
         msg = EmailMessage()
-        msg.set_content(mess_file.read())
+        msg.set_content(mess_file3.read())
 
     log.info('   Message to users start:')  
     log.info('   *** %s' % args.globus_message)  

@@ -68,6 +68,14 @@ SECTIONS['globus'] = {
     'edit-user-badge': {
         'type': int,
         'help': 'Badge number of user to be added to the experiment.'},
+    'globus-endpoint-id': {
+        'default': '9c9cb97e-de86-11e6-9d15-22000a1e3b52',
+        'type': str,
+        'help': 'Globus ID of the endpoint for formation of a direct email link'},
+    'globus-beamline-root': {
+        'default': '/gdata/dm/7BM',
+        'type': str,
+        'help': 'Path from data storage root to the beamline top directory'},
     } 
 
 SECTIONS['local'] = {
