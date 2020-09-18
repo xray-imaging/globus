@@ -73,8 +73,8 @@ def email(args):
     new_dir = args.year_month + '/' + args.pi_last_name
 
     if args.schedule:
-        users = scheduling.get_users(args)
-        emails = scheduling.find_emails(users, exclude_pi=False)
+        users = scheduling.get_current_users(args)
+        emails = scheduling.get_current_emails(users, exclude_pi=False)
         emails.append(args.support_primary_email)
         emails.append(args.support_secondary_email)
         for email in emails:

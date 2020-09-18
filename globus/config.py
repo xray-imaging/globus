@@ -10,11 +10,6 @@ from globus import log
 CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
 MESSAGE_FILE_NAME = os.path.join(pathlib.Path(__file__).parent, 'message.txt')
 
-USERNAME = '123456'
-PASSWORD = 'password'
-BEAMLINE = "2-BM-A,B"
-
-
 SECTIONS = OrderedDict()
 
 SECTIONS['general'] = {
@@ -27,29 +22,6 @@ SECTIONS['general'] = {
         'default': True,
         'help': 'Verbose output',
         'action': 'store_true'}}
-
-SECTIONS['scheduling'] = {
-    'username' : {
-        'default': USERNAME,
-        'type': str,
-        'help': "scheduling system username (badge #)"},
-    'password' : {
-        'default': PASSWORD,
-        'type': str,
-        'help': "scheduling system password"},
-    'internal' : {
-        'default' : "https://schedule.aps.anl.gov:8443/beamschedds/springws/",
-        'type': str,
-        'help': "File name of configuration"},
-    'external' : {
-        'default' : "https://schedule.aps.anl.gov/beamschedds/springws/",
-        'type': str,
-        'help': "scheduling system hosts"},
-    'beamline' : {
-        'default' : BEAMLINE,
-        'type': str,
-        'help': "beam line"},
-    }
 
 SECTIONS['experiment'] = {
     'year-month': {
@@ -124,17 +96,17 @@ SECTIONS['local'] = {
 
 SECTIONS['epics'] = {
     'experiment-year-month': {
-        'default': '2bmS1:ExpInfo:ExperimentYearMonth', 
+        'default': '2bma:TomoScan:ExperimentYearMonth', 
         'type': str,
         'help': "EPICS process variable containing the experiment year and month",
         'metavar': 'PATH'},
     'user-email': {
-        'default': '2bmS1:ExpInfo:UserEmail', 
+        'default': '2bma:TomoScan:UserEmail', 
         'type': str,
         'help': "EPICS process variable containing the user email address",
         'metavar': 'PATH'},
     'user-last-name': {
-        'default': '2bmS1:ExpInfo:UserLastName', 
+        'default': '2bma:TomoScan:UserLastName', 
         'type': str,
         'help': "EPICS process variable containing the user last name",
         'metavar': 'PATH'}}
@@ -155,8 +127,7 @@ SECTIONS['email'] = {
         'help': "Beamline scientist email",
         'metavar': 'FILE'}}
 
-
-GLOBUS_PARAMS = ('scheduling', 'globus', 'local', 'experiment','epics')
+GLOBUS_PARAMS = ('globus', 'local', 'experiment','epics')
 EMAIL_PARAMS = ('email', 'globus', 'epics')
 
 NICE_NAMES = ('General', 'Input')
