@@ -1,5 +1,6 @@
 from epics import PV
 from globus import log
+import numpy as np
 
 
 def init_general_PVs(args):
@@ -30,12 +31,20 @@ def update_experiment_info(args):
     GUP_title = global_PVs['ProposalTitle'].get()
 
     # convert list of chars into string and remove NULL termination
-    year_month_str = "".join([chr(c) for c in year_month]).rstrip('\x00')
-    pi_last_name_str = "".join([chr(c) for c in pi_last_name]).rstrip('\x00')
-    pi_email_str = "".join([chr(c) for c in pi_email]).rstrip('\x00')
-    gup_number_str = "".join([chr(c) for c in GUP_number]).rstrip('\x00')
-    gup_title_str = "".join([chr(c) for c in GUP_title]).rstrip('\x00')
+    year_month_str = string_from_pv_output(year_month)
+    pi_last_name_str = string_from_pv_output(pi_last_name)
+    pi_email_str = string_from_pv_output(pi_email)
+    gup_number_str = string_from_pv_output(GUP_number)
+    gup_title_str = string_from_pv_output(GUP_title)
 
     return year_month_str, pi_last_name_str, gup_number_str, gup_title_str
 
 
+def string_from_pv_output(pv_output_in):
+    '''Converts pv_output_in to string if necessary.
+    '''
+    if type(pv_output_in) == str:
+        return pv_output_in
+    elif type(pv_output_in) == np.ndarray:
+        return "".join([chr(c) for c in pv_output_in]).rstrip('\x00')
+ 
