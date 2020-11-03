@@ -24,6 +24,7 @@ def update_experiment_info(args):
     Proposal number as a string
     '''
     global_PVs = init_general_PVs(args)
+
     year_month = global_PVs['ExperimentYearMonth'].get()
     pi_last_name = global_PVs['UserLastName'].get()
     pi_email = global_PVs['UserEmail'].get()

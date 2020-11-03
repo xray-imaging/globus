@@ -117,7 +117,7 @@ SECTIONS['epics'] = {
         'help': "scan prefix for PVs:"},
     'experiment-year-month': {
         'default': 'ExperimentYearMonth', 
-        'type': str,
+       'type': str,
         'help': "EPICS process variable containing the experiment year and month",
         'metavar': 'PATH'},
     'user-email': {
@@ -158,9 +158,8 @@ SECTIONS['email'] = {
         'help': "Beamline scientist email",
         'metavar': 'FILE'}}
 
-
-GLOBUS_PARAMS = ('scheduling', 'globus', 'local', 'experiment','epics')
-EMAIL_PARAMS = ('scheduling', 'email', 'globus', 'epics')
+GLOBUS_PARAMS = ('globus', 'local', 'experiment','epics')
+EMAIL_PARAMS = ('email', 'globus', 'epics')
 
 NICE_NAMES = ('General', 'Input')
 
@@ -213,7 +212,7 @@ def config_to_list(config_name=CONFIG_FILE_NAME):
         for name, opts in ((n, o) for n, o in SECTIONS[section].items() if config.has_option(section, n)):
             value = config.get(section, name)
 
-            if value is not '' and value != 'None':
+            if value != '' and value != 'None':
                 action = opts.get('action', None)
 
                 if action == 'store_true' and value == 'True':
@@ -270,7 +269,7 @@ def write(config_file, args=None, sections=None):
             else:
                 value = opts['default'] if opts['default'] is not None else ''
 
-            prefix = '# ' if value is '' else ''
+            prefix = '# ' if value == '' else ''
 
             if name != 'config':
                 config.set(section, prefix + name, str(value))
