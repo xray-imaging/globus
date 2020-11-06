@@ -66,6 +66,7 @@ SECTIONS['globus'] = {
         'help': "File name of the notification e-mail message to user",
         'metavar': 'FILE'},
     'edit-user-badge': {
+        'default': 0,
         'type': int,
         'help': 'Badge number of user to be added to the experiment.'},
     'globus-endpoint-id': {
