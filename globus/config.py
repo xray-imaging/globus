@@ -113,7 +113,7 @@ SECTIONS['epics'] = {
         'type': str,
         'help': "IOC prefix for PVs:"},
     'scan_prefix' : {
-        'default' : 'ExpInfo:',
+        'default' : 'TomoScan:',
         'type': str,
         'help': "scan prefix for PVs:"},
     'experiment-year-month': {
