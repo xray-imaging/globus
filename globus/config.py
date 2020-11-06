@@ -108,11 +108,11 @@ SECTIONS['local'] = {
 
 
 SECTIONS['epics'] = {
-    'pv_prefix' : {
+    'pv-prefix' : {
         'default' : '7bmb1:',
         'type': str,
         'help': "IOC prefix for PVs:"},
-    'scan_prefix' : {
+    'scan-prefix' : {
         'default' : 'TomoScan:',
         'type': str,
         'help': "scan prefix for PVs:"},
