@@ -131,10 +131,12 @@ def add_users_dm_experiment(exp_obj, username_list):
 
 
 def start_dm_daq(args):
-    '''Starts the data managememnt data acquisition (DM DAQ) system. 
-    DAQ monitors a directory for new files and transfer 
-    them to the current experiment storage location. 
+    '''Starts the data managememnt (DM) data acquisition (DAQ) system. 
+    In this mode of operation, the DM system will monitor specified data directory 
+    for incoming files, and will transfer data automatically.
+    Alternative is to upload files after experiment is done.
     '''
+    
     exp_name = directories.make_directory_name(args)
     analysis_dir_name = directories.create_analysis_dir_name(args)
     log.info('Check that the directory exists on the analysis machine')
