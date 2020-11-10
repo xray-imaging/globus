@@ -37,7 +37,7 @@ def email(args):
     with information on how to get their data from Voyager.
     '''
     log.info('Sending e-mail to users on the DM experiment')
-    username_list = voyager_setup.make_exp_username_list(args)
+    username_list = voyager_setup.make_username_list(args)
     email_list = voyager_setup.make_user_email_list(username_list)
     if len(email_list) == 0:
         log.warning('   No valid e-mail addresses')
@@ -48,7 +48,7 @@ def email(args):
     with open(args.globus_message_file, 'w') as mess_file2:
         for line in temp_mess_file:
             if line.startswith('Data link:'):
-                line = 'Data link: {:s}'.format(voyager_setup.make_email_link(args))
+                line = 'Data link: {:s}'.format(voyager_setup.make_data_link(args))
             mess_file2.write(line)
 
     with open(args.globus_message_file, 'r') as mess_file3:        
@@ -86,15 +86,15 @@ def dirs(args):
     directories.mkdir(remote_server, analysis_dir_name)
  
 
-def user_init(args):
+def dm_init(args):
     '''Initiate actions for the start of an experiment.
     * Create an experiment in the DM system.
     * Add users to this experiment
     '''
     new_exp = voyager_setup.create_dm_experiment(args)
-    user_list = voyager_setup.make_proposal_username_list(args)
+    user_list = voyager_setup.make_dm_username_list(args)
     log.info('Adding users from the current proposal to the DM experiment.')
-    voyager_setup.experiment_add_users(new_exp, user_list)
+    voyager_setup.add_users_dm_experiment(new_exp, user_list)
 
 
 def start_daq(args):
@@ -110,15 +110,15 @@ def stop_daq(args):
 
 
 def add_user(args):
-    voyager_setup.add_user(args)
+    voyager_setup.add_user_dm_experiment(args)
 
 
 def remove_user(args):
-    voyager_setup.remove_user(args)
+    voyager_setup.remove_user_dm_experiment(args)
 
 
 def list_users(args):
-    voyager_setup.list_users(args)
+    voyager_setup.list_users_dm_experiment(args)
 
 
 def main():
@@ -140,15 +140,15 @@ def main():
     dirs_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
-        ('init',        init,           (),                             "Create configuration file"),
-        ('email',       email,          email_params,                   "Send email with link to all users on proposal"),
-        ('dirs',        dirs,           dirs_params,                    "Create folders on data collection and data analysis computers"),
-        ('user_init',   user_init,      email_params,                   "Initialize experiment"),
-        ('start_daq',   start_daq,      dirs_params,                   "Initialize DM DAQ"),
+        ('init',        init,           (),                            "Create configuration file"),
+        ('dm_init',     dm_init,        email_params,                  "Initialize DM experiment"),
+        ('dirs',        dirs,           dirs_params,                   "Create folders on data collection and data analysis computers"),
+        ('list_users',  list_users,     dirs_params,                   "List the users on the current DM experiment"),
+        ('add_user',    add_user,       dirs_params,                   "Add a user to the current DM experiment by badge number"),
+        ('remove_user', remove_user,    dirs_params,                   "Remove a user from the current DM experiment by badge number"),
+        ('email',       email,          email_params,                  "Send email with link to all users on the proposal"),
+        ('start_daq',   start_daq,      dirs_params,                   "Start DM DAQ"),
         ('stop_daq',    stop_daq,       dirs_params,                   "Stop DM DAQ"),
-        ('add_user',    add_user,       dirs_params,                   "Add a user to the DM experiment by badge number"),
-        ('list_users',  list_users,     dirs_params,                   "List the users on the current experiment"),
-        ('remove_user', remove_user,    dirs_params,                   "Remove a user from the DM experiment by badge number"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')

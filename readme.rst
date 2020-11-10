@@ -61,7 +61,7 @@ then:
     globus init
         Creates a globus.conf default file
 
-    globus user_init 
+    globus dm_init 
         Reads the PV data, creates a DM experiment, and adds users from the proposal to the DM experiment 
 
     globus dirs
@@ -93,7 +93,7 @@ Typical Workflow
 
 ::
 
-    $ globus user_init
+    $ globus dm_init
     $ globus dirs
     $ globus list_users
     $ globus add_user --edit-user-badge 123456
