@@ -18,8 +18,8 @@ __version__ = "0.0.1"
 __docformat__ = 'restructuredtext en'
 
 
-def make_proposal_username_list(args):
-    '''Make a list of DM usernames for the current proposal.
+def make_dm_username_list(args):
+    '''Make a list of DM usernames 'd+badge#' from the current proposal (GUP number).
     '''
     log.info('Making a list of DM system usernames from target proposal')
     year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
@@ -34,7 +34,7 @@ def make_proposal_username_list(args):
     return user_ids
 
 
-def make_exp_username_list(args):
+def make_username_list(args):
     '''Make a list of the usernames from the current DM experiment.
     '''
     log.info('Making a list of DM system usernames from current DM experiment')
@@ -44,17 +44,26 @@ def make_exp_username_list(args):
         return exp_obj['experimentUsernameList']
     except:
         log.error('No such experiment in the DM system: {:s}'.format(exp_name))
-        log.error('   Have you run globus user_init yet?')
+        log.error('   Have you run globus dm_init yet?')
         return []
 
 
 def make_user_email_list(username_list):
-    '''Make a list of e-mail addresses for a list of DM usernames.
-    Input
-    list of DM usernames, each of which is in the form 'd12345'
-    Returns:
-    list of e-mail addresses.
+    '''Make a list of e-mail addresses from a list of DM usernames.
+    
+    Parameters
+    ----------
+
+    username_list : list
+        list of DM usernames, each of which is in the form 'd+badge#'.
+
+    Returns
+    -------
+
+    list 
+        e-mail addresses.
     '''
+
     email_list = []
     for u in username_list:
         try:
@@ -67,10 +76,19 @@ def make_user_email_list(username_list):
         
 
 def create_dm_experiment(args):
-    '''Creates a new experiment on Voyager using Data Management.
-    Uses the GUP title as the description.
-    Name is in the form year-month-PILastName-GUP#
-    Returns:
+    '''Creates a new DM experiment on Voyager.
+
+    Parameters
+    ----------
+
+    args : list
+        args is used to extract current year_month, pi_lastname, prop_number, 
+        prop_title and generate a unique DM experiment name in the form of 
+        year-month-PILastName-GUP#
+
+    Returns
+    -------
+
     Experiment object
     '''
     year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
@@ -97,7 +115,7 @@ def create_dm_experiment(args):
     return new_exp
 
 
-def experiment_add_users(exp_obj, username_list):
+def add_users_dm_experiment(exp_obj, username_list):
     '''Add a list of users to a DM experiment
     '''
     existing_unames = exp_obj['experimentUsernameList']
@@ -113,7 +131,9 @@ def experiment_add_users(exp_obj, username_list):
 
 
 def start_dm_daq(args):
-    '''Starts a DAQ process on the current experiment.
+    '''Starts the data managememnt data acquisition (DM DAQ) system. 
+    DAQ monitors a directory for new files and transfer 
+    them to the current experiment storage location. 
     '''
     exp_name = directories.make_directory_name(args)
     analysis_dir_name = directories.create_analysis_dir_name(args)
@@ -159,7 +179,9 @@ def stop_dm_daq(args):
         log.info('   No active DAQs for this experiment were found')
 
 
-def add_user(args):
+def add_user_dm_experiment(args):
+    '''Add a user from the DM experiment.
+    '''
     exp_name = directories.make_directory_name(args)
     try:
         exp_obj = exp_api.getExperimentByName(exp_name)
@@ -167,13 +189,13 @@ def add_user(args):
         log.error('   No appropriate experiment found.')
         return
     try:
-        experiment_add_users(exp_obj, ['d{:d}'.format(args.edit_user_badge)])
+        add_users_dm_experiment(exp_obj, ['d{:d}'.format(args.edit_user_badge)])
     except:
         log.error('   Problem adding the user.  Check the badge number')
     
 
-def remove_user(args):
-    '''Remvoe a user from the DM experiment.
+def remove_user_dm_experiment(args):
+    '''Remove a user from the DM experiment.
     '''
     exp_name = directories.make_directory_name(args)
     dm_username = 'd{:d}'.format(args.edit_user_badge)
@@ -195,7 +217,7 @@ def remove_user(args):
         log.error('   Problem removing the user.  Check the badge number')
 
 
-def list_users(args):
+def list_users_dm_experiment(args):
     '''Lists the users on the current experiment in a nice format.
     '''
     log.info('Listing the users on the DM experiment')
@@ -228,8 +250,9 @@ def make_pretty_user_name(user_obj):
     return output_string
 
 
-def make_email_link(args):
-    '''Makes the link to give to users so they can access their data directly.
+def make_data_link(args):
+    '''Makes the http link to the data. This link will be included in the email sent to the 
+    users so they can access their data directly.
     '''
     exp_name = directories.make_directory_name(args)
     target_exp = exp_api.getExperimentByName(exp_name)
