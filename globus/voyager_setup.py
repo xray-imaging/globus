@@ -28,7 +28,7 @@ def make_dm_username_list(args):
     log.info('   Adding the primary beamline contact')
     user_ids = {'d' + str(args.primary_beamline_contact_badge)}
     for u in users:
-        log.info('   Adding user {0}, {1}, badge #{2}'.format(
+        log.info('   Adding user {0}, {1}, badge {2}'.format(
                     u['lastName'], u['firstName'], u['badge']))
         user_ids.add('d' + str(u['badge']))
     return user_ids
@@ -84,7 +84,7 @@ def create_dm_experiment(args):
     args : list
         args is used to extract current year_month, pi_lastname, prop_number, 
         prop_title and generate a unique DM experiment name in the form of 
-        year-month-PILastName-GUP#
+        year-month-PILastName-ProposalNumber
 
     Returns
     -------
