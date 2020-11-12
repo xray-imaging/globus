@@ -12,7 +12,7 @@ from globus import log
 
 
 def make_directory_name(args):
-    '''Make a name based on year-month-piLastName-GUP#
+    '''Make a name based on year-month-piLastName-ProposalNumber
     Return: str with the name
     '''
     year_month, pi_lastname, gup_number, gup_title = pv.update_experiment_info(args)

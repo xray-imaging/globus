@@ -8,7 +8,6 @@ from collections import OrderedDict
 from globus import log
 
 CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
-MESSAGE_FILE_NAME = os.path.join(pathlib.Path(__file__).parent, 'message.txt')
 
 SECTIONS = OrderedDict()
 
@@ -27,7 +26,7 @@ SECTIONS['scheduling'] = {
     'beamline' : {
         'default' : '7-BM-A,B',
         'type': str,
-        'help': "beam line"},
+        'help': "beam line name as define in the APS scheduling system"},
     }
 
 SECTIONS['experiment'] = {
@@ -56,19 +55,29 @@ SECTIONS['globus'] = {
         'type': int,
         'default': 56788,
         'help': 'Badge name of primary beamline contact.  Added to all DM experiments'},
-    'globus-message': {
+    'primary-beamline-contact-email': {
+        'default': 'akastengren@anl.gov',
         'type': str,
-        'default': 'IMPORTANT: Data access details',
-        'help': "User e-mail subject line"},
+        'help': "Beamline scientist email",
+        'metavar': 'FILE'},
+    'secondary-beamline-contact-badge': {
+        'type': int,
+        'default': 56788,
+        'help': 'Badge name of primary beamline contact.  Added to all DM experiments'},
+    'secondary-beamline-contact-email': {
+        'default': 'akastengren@anl.gov',
+        'type': str,
+        'help': "Beamline scientist email",
+        'metavar': 'FILE'},
     'globus-message-file': {
-        'default': MESSAGE_FILE_NAME,
+        'default': 'message-7bm.txt',
         'type': str,
         'help': "File name of the notification e-mail message to user",
         'metavar': 'FILE'},
     'edit-user-badge': {
         'default': 0,
         'type': int,
-        'help': 'Badge number of user to be added to the experiment.'},
+        'help': 'Badge number of the last user manually added to the experiment'},
     'globus-endpoint-id': {
         'default': '9c9cb97e-de86-11e6-9d15-22000a1e3b52',
         'type': str,
@@ -131,12 +140,12 @@ SECTIONS['epics'] = {
         'type': str,
         'help': "EPICS process variable containing the user last name",
         'metavar': 'PATH'},
-    'GUP-number': {
+    'proposal-number': {
         'default': 'ProposalNumber',
         'type': str,
         'help': 'EPICS PV containing the proposal number',
         'metavar': 'PATH'},
-    'GUP-desc': {
+    'proposal-title': {
         'default': 'ProposalTitle',
         'type': str,
         'help': 'EPICS PV containing the proposal title',
@@ -147,22 +156,11 @@ SECTIONS['email'] = {
     'schedule': {
         'default': False,
         'help': 'Set to True to send and email to all users listed in the current proposal',
-        'action': 'store_true'},
-    'support-primary-email': {
-        'default': 'akastengren@anl.gov',
-        'type': str,
-        'help': "Beamline scientist email",
-        'metavar': 'FILE'},
-    'support-secondary-email': {
-        'default': 'akastengren@anl.gov',
-        'type': str,
-        'help': "Beamline scientist email",
-        'metavar': 'FILE'}}
+        'action': 'store_true'}}
 
 GLOBUS_PARAMS = ('globus', 'local', 'experiment','epics')
-EMAIL_PARAMS = ('email', 'globus', 'epics')
 
-NICE_NAMES = ('General', 'Input')
+NICE_NAMES = ('General', 'Scheduling', 'Experiment', 'Globus', 'Local', 'Epics', 'e-mail')
 
 def get_config_name():
     """Get the command line --config option."""
@@ -278,7 +276,7 @@ def write(config_file, args=None, sections=None):
         config.write(f)
 
 
-def log_values(args):
+def show_config(args):
     """Log all values set in the args namespace.
 
     Arguments are grouped according to their section and logged alphabetically
@@ -286,12 +284,12 @@ def log_values(args):
     """
     args = args.__dict__
 
+    log.warning('Globus status start')
     for section, name in zip(SECTIONS, NICE_NAMES):
-        entries = sorted((k for k in args.keys() if k in SECTIONS[section]))
-
+        entries = sorted((k for k in args.keys() if k.replace('_', '-') in SECTIONS[section]))
         if entries:
-            log.info(name)
-
             for entry in entries:
-                value = args[entry] if args[entry] is not None else "-"
+                value = args[entry] if args[entry] != None else "-"
                 log.info("  {:<16} {}".format(entry, value))
+
+    log.warning('Globus status end')
