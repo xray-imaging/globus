@@ -1,15 +1,13 @@
 #!/local/user2bmb/Software/anaconda/bin/python
 # -*- coding: utf-8 -*-
 import os
+import re
 import sys
 import argparse
+import pathlib
 import logging
 import time
-import re
-import smtplib
-from email.message import EmailMessage
 from datetime import datetime
-
 from dmagic import scheduling
 
 from globus import config
@@ -17,6 +15,7 @@ from globus import voyager_setup
 from globus import log
 from globus import pv
 from globus import directories
+from globus import message
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
@@ -30,6 +29,9 @@ def init(args):
     else:
         raise RuntimeError("{0} already exists".format(args.config))
 
+def show(args):
+    # show args from default (config.py) if not changed
+    config.show_config(args)
 
 def email(args):
 
@@ -42,34 +44,13 @@ def email(args):
     if len(email_list) == 0:
         log.warning('   No valid e-mail addresses')
         return
-    #Add in the actual data link to the message
-    with open(args.globus_message_file, 'r') as mess_file:
-        temp_mess_file = mess_file.readlines()
-    with open(args.globus_message_file, 'w') as mess_file2:
-        for line in temp_mess_file:
-            if line.startswith('Data link:'):
-                line = 'Data link: {:s}'.format(voyager_setup.make_data_link(args))
-            mess_file2.write(line)
 
-    with open(args.globus_message_file, 'r') as mess_file3:        
-        msg = EmailMessage()
-        msg.set_content(mess_file3.read())
-
+    msg = message.message(args)
     log.info('   Message to users start:')  
-    log.info('   *** %s' % args.globus_message)  
+    log.info('   *** %s' % msg)  
     log.info('   Message to users end')  
 
-    msg['From'] = args.support_primary_email
-    msg['Subject'] = 'Important information on APS experiment'
-    s = smtplib.SMTP('localhost')
-    for em in email_list:
-        if msg['To'] is None:
-            msg['To'] = em
-        else:
-            msg.replace_header('To',em)
-        log.info('   Sending informational message to {:s}'.format(em))
-        s.send_message(msg)
-    s.quit()
+    message.send_email(msg, email_list)
 
 
 def dirs(args):
@@ -135,20 +116,19 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', **config.SECTIONS['general']['config'])
-    show_params = config.GLOBUS_PARAMS
-    email_params = config.EMAIL_PARAMS
-    dirs_params = config.GLOBUS_PARAMS
+    globus_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
-        ('init',        init,           (),                            "Create configuration file"),
-        ('dm_init',     dm_init,        email_params,                  "Initialize DM experiment"),
-        ('dirs',        dirs,           dirs_params,                   "Create folders on data collection and data analysis computers"),
-        ('list_users',  list_users,     dirs_params,                   "List the users on the current DM experiment"),
-        ('add_user',    add_user,       dirs_params,                   "Add a user to the current DM experiment by badge number"),
-        ('remove_user', remove_user,    dirs_params,                   "Remove a user from the current DM experiment by badge number"),
-        ('email',       email,          email_params,                  "Send email with link to all users on the proposal"),
-        ('start_daq',   start_daq,      dirs_params,                   "Start DM DAQ"),
-        ('stop_daq',    stop_daq,       dirs_params,                   "Stop DM DAQ"),
+        ('init',        init,           (),             "Create configuration file"),
+        ('show',        show,           globus_params,  "Show status"),
+        ('dm_init',     dm_init,        globus_params,  "Initialize DM experiment"),
+        ('dirs',        dirs,           globus_params,  "Create folders on data collection and data analysis computers"),
+        ('list_users',  list_users,     globus_params,  "List the users on the current DM experiment"),
+        ('add_user',    add_user,       globus_params,  "Add a user to the current DM experiment by badge number"),
+        ('remove_user', remove_user,    globus_params,  "Remove a user from the current DM experiment by badge number"),
+        ('email',       email,          globus_params,  "Send email with link to all users on the proposal"),
+        ('start_daq',   start_daq,      globus_params,  "Start DM DAQ"),
+        ('stop_daq',    stop_daq,       globus_params,  "Stop DM DAQ"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')
@@ -162,12 +142,7 @@ def main():
     args = config.parse_known_args(parser, subparser=True)
   
     try:
-        # load args from default (config.py) if not changed
-        config.log_values(args)
         args._func(args)
-        # undate globus.config file
-        sections = config.GLOBUS_PARAMS
-        config.write(args.config, args=args, sections=sections)
     except RuntimeError as e:
         log.error(str(e))
         sys.exit(1)
