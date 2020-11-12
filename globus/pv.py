@@ -6,8 +6,8 @@ import numpy as np
 def init_general_PVs(args):
 
     global_PVs = {}
-    prefix = args.pv_prefix
-    scan_prefix = args.scan_prefix
+    prefix = args.ioc_prefix
+    scan_prefix = args.tomoscan_prefix
     global_PVs['ExperimentYearMonth'] = PV(prefix + scan_prefix + args.experiment_year_month)
     global_PVs['UserEmail'] = PV(prefix + scan_prefix + args.user_email)
     global_PVs['UserLastName'] = PV(prefix + scan_prefix + args.user_last_name)
