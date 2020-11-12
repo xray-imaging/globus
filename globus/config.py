@@ -78,14 +78,23 @@ SECTIONS['globus'] = {
         'default': 0,
         'type': int,
         'help': 'Badge number of the last user manually added to the experiment'},
-    'globus-endpoint-id': {
+    'globus-server-name': {
+        'type': str,
+        'default': 'voyager',
+        'help': "Globus server name. Options are: voyager or petrel"},
+    'globus-server-id': {
         'default': '9c9cb97e-de86-11e6-9d15-22000a1e3b52',
         'type': str,
         'help': 'Globus ID of the endpoint for formation of a direct email link'},
-    'globus-beamline-root': {
+    'globus-app-id': {
+        'default': 'a9badd00-39c3-4473-b180-8bccc113ba1d', # for usr32idc/petrel
+        'type': str,
+        'help': "Globus app UUID, to create one see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client",
+        'metavar': 'PATH'},
+    'globus-server-top-dir': {
         'default': '/gdata/dm/7BM',
         'type': str,
-        'help': 'Path from data storage root to the beamline top directory'},
+        'help': 'Path from data storage root to the beamline top directory. Options are /gdata/dm/7BM or /gdata/dm/2BM'},
     } 
 
 SECTIONS['local'] = {
@@ -117,14 +126,14 @@ SECTIONS['local'] = {
 
 
 SECTIONS['epics'] = {
-    'pv-prefix' : {
+    'ioc-prefix' : {
         'default' : '7bmb1:',
         'type': str,
-        'help': "IOC prefix for PVs:"},
-    'scan-prefix' : {
+        'help': "IOC prefix for PVs"},
+    'tomoscan-prefix' : {
         'default' : 'TomoScan:',
         'type': str,
-        'help': "scan prefix for PVs:"},
+        'help': "scan prefix for PVs"},
     'experiment-year-month': {
         'default': 'ExperimentYearMonth', 
        'type': str,

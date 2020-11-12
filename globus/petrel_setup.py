@@ -21,13 +21,13 @@ def show_endpoints(args, ac, tc):
          log.info("*** *** [{}] {}".format(ep["id"], ep["display_name"]))
 
 
-def create_clients(app_id):
+def create_clients(globus_app_id):
   """
   Create authorize and transfer clients
 
   Parameters
   ----------
-  app_id : App UUID 
+  globus_app_id : App UUID 
 
   Returns
   -------
@@ -36,7 +36,7 @@ def create_clients(app_id):
     
     """
 
-  client = globus_sdk.NativeAppAuthClient(app_id)
+  client = globus_sdk.NativeAppAuthClient(globus_app_id)
   client.oauth2_start_flow(refresh_tokens=True)
 
   log.warning('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
@@ -69,8 +69,9 @@ def create_globus_dir(args,
                     ac,              # Authorize client  
                     tc):             # Transfer client
 
-    date_dir_path = args.globus_server_top_dir + args.year_month + '/'
-    pi_last_name_dir_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
+    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
+    date_dir_path = args.globus_server_top_dir + year_month + '/'
+    pi_last_name_dir_path = args.globus_server_top_dir + year_month + '/' + pi_last_name + '/'
 
     try:
       response = tc.operation_mkdir(args.globus_server_uuid, path=date_dir_path)
@@ -115,7 +116,8 @@ def share_globus_dir(args,
     user_id = r['identities'][0]['id']
     # log.info(r, user_id)
 
-    directory_full_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
+    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
+    directory_full_path = args.globus_server_top_dir + year_month + '/' + pi_last_name + '/'
     # Set access control and notify user
     rule_data = {
       'DATA_TYPE': 'access',
