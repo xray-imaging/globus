@@ -1,5 +1,5 @@
 '''
-    tomoscan custom logger
+    globus custom logger
     
 '''
 import logging

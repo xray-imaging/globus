@@ -29,22 +29,22 @@ SECTIONS['scheduling'] = {
         'help': "beam line name as define in the APS scheduling system"},
     }
 
-SECTIONS['experiment'] = {
-    'year-month': {
-        'default': '2020-12',
-        'type': str,
-        'help': "Experiment year and month",
-        'metavar': 'FILE'},
-    'pi-last-name': {
-        'default': 'decarlo',
-        'type': str,
-        'help': "Experiment PI last name",
-        'metavar': 'FILE'},
-    'pi-email': {
-        'default': 'decarlof@gmail.com',
-        'type': str,
-        'help': "Experiment PI email",
-        'metavar': 'FILE'}}
+# SECTIONS['experiment'] = {
+#     'year-month': {
+#         'default': '2020-12',
+#         'type': str,
+#         'help': "Experiment year and month",
+#         'metavar': 'FILE'},
+#     'pi-last-name': {
+#         'default': 'decarlo',
+#         'type': str,
+#         'help': "Experiment PI last name",
+#         'metavar': 'FILE'},
+#     'pi-email': {
+#         'default': 'decarlof@gmail.com',
+#         'type': str,
+#         'help': "Experiment PI email",
+#         'metavar': 'FILE'}}
 
 SECTIONS['globus'] = {
     'experiment-type': {
@@ -167,9 +167,9 @@ SECTIONS['email'] = {
         'help': 'Set to True to send and email to all users listed in the current proposal',
         'action': 'store_true'}}
 
-GLOBUS_PARAMS = ('globus', 'local', 'experiment','epics')
+GLOBUS_PARAMS = ('globus', 'local', 'epics')
 
-NICE_NAMES = ('General', 'Scheduling', 'Experiment', 'Globus', 'Local', 'Epics', 'e-mail')
+NICE_NAMES = ('General', 'Scheduling', 'Globus', 'Local', 'Epics', 'e-mail')
 
 def get_config_name():
     """Get the command line --config option."""

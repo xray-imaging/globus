@@ -29,21 +29,28 @@ def message(args):
 
     return msg
 
-def send_email(msg, email_list):
+def send_email(args):
+
+    log.info("email will contain %s download data link", args.globus_server_name)
     if not yes_or_no('   *** Yes or No'):                
         log.info(' ')
         log.warning('   *** Message not not sent')
         return False
 
-    s = smtplib.SMTP('localhost')
-    for em in email_list:
-        if msg['To'] is None:
-            msg['To'] = em
-        else:
-            msg.replace_header('To',em)
-        log.info('   Sending informational message to {:s}'.format(em))
-        s.send_message(msg)
-    s.quit()
+    if (args.globus_server_name == 'voyager'):
+        s = smtplib.SMTP('localhost')
+        for em in args.email_list:
+            if args.msg['To'] is None:
+                args.msg['To'] = em
+            else:
+                args.msg.replace_header('To',em)
+            log.info('   Sending informational message to {:s}'.format(em))
+            # s.send_message(args.msg)
+        s.quit()
+    elif (args.globus_server_name == 'petrel'):
+        log.info('pass')
+    else:
+        log.error("%s is not a supported globus server" % args.globus_server_name)
 
 def yes_or_no(question):
     answer = str(input(question + " (Y/N): ")).lower().strip()

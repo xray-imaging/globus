@@ -140,10 +140,10 @@ def start_dm_daq(args):
     exp_name = directories.make_directory_name(args)
     analysis_dir_name = directories.create_analysis_dir_name(args)
     log.info('Check that the directory exists on the analysis machine')
-    dir_check = directories.check_remote_directory(args.analysis, analysis_dir_name) 
+    dir_check = directories.check_local_directory(args.analysis, analysis_dir_name) 
     if dir_check == 2:
         log.info('   Need to make the analysis machine directory')
-        mkdir_response = directories.create_remote_directory(
+        mkdir_response = directories.create_local_directory(
                             args.analysis, analysis_dir_name)
         if mkdir_response:
             log.error('   Unknown response when creating analysis machine directory.  Exiting')

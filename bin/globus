@@ -40,17 +40,17 @@ def email(args):
     '''
     log.info('Sending e-mail to users on the DM experiment')
     username_list = voyager_setup.make_username_list(args)
-    email_list = voyager_setup.make_user_email_list(username_list)
-    if len(email_list) == 0:
+    args.email_list = voyager_setup.make_user_email_list(username_list)
+    if len(args.email_list) == 0:
         log.warning('   No valid e-mail addresses')
         return
 
-    msg = message.message(args)
+    args.msg = message.message(args)
     log.info('   Message to users start:')  
-    log.info('   *** %s' % msg)  
+    log.info('   *** %s' % args.msg)  
     log.info('   Message to users end')  
 
-    message.send_email(msg, email_list)
+    message.send_email(args)
 
 
 def dirs(args):
