@@ -3,6 +3,7 @@ import pathlib
 import smtplib
 
 from email.message import EmailMessage
+from dmagic import scheduling
 
 from globus import log
 from globus import voyager_setup
@@ -45,10 +46,40 @@ def send_email(args):
             else:
                 args.msg.replace_header('To',em)
             log.info('   Sending informational message to {:s}'.format(em))
-            # s.send_message(args.msg)
+            # s.send_message(args.msg) # testing
         s.quit()
     elif (args.globus_server_name == 'petrel'):
-        log.info('pass')
+        # # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
+        # # to create your project app_id. Once is set put it in petrel_setup.config app-id field
+        app_id = args.app_id
+        ac, tc = petrel_setup.create_clients(app_id)
+        petrel_setup.show_endpoints(args, ac, tc)
+
+        # server_top_dir = args.globus_server_top_dir
+
+        # year_month, pi_last_name, pi_email = pv.update_experiment_info(args)
+
+        log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+        petrel_setup.create_globus_dir(args, ac, tc)
+
+        # Pull custom email text from file
+        # message = args.msg
+        # with open (args.globus_message_file, "r") as myfile:
+        #     args.globus_message=myfile.read()
+        # log.info('Message to users start:')  
+        # log.info('*** %s' % args.globus_message)  
+        # log.info('Message to users end')  
+
+        new_dir = year_month + '/' + pi_last_name
+
+        users = scheduling.get_current_users(args)
+        emails = scheduling.get_current_emails(users, exclude_pi=False)
+        emails.append(args.support_primary_email)
+        emails.append(args.support_secondary_email)
+        for email in emails:
+            args.pi_email = email
+            log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
+            petrel_setup.share_globus_dir(args, ac, tc)
     else:
         log.error("%s is not a supported globus server" % args.globus_server_name)
 
