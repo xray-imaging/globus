@@ -75,7 +75,7 @@ def make_user_email_list(username_list):
     return email_list
         
 
-def create_dm_experiment(args):
+def create_experiment(args):
     '''Creates a new DM experiment on Voyager.
 
     Parameters
@@ -115,7 +115,7 @@ def create_dm_experiment(args):
     return new_exp
 
 
-def add_users_dm_experiment(exp_obj, username_list):
+def add_users(exp_obj, username_list):
     '''Add a list of users to a DM experiment
     '''
     existing_unames = exp_obj['experimentUsernameList']
@@ -130,7 +130,7 @@ def add_users_dm_experiment(exp_obj, username_list):
                     make_pretty_user_name(user_obj)))
 
 
-def start_dm_daq(args):
+def start_daq(args):
     '''Starts the data managememnt (DM) data acquisition (DAQ) system. 
     In this mode of operation, the DM system will monitor specified data directory 
     for incoming files, and will transfer data automatically.
@@ -165,7 +165,7 @@ def start_dm_daq(args):
     daq_obj = daq_api.startDaq(exp_name, dm_dir_name)
 
 
-def stop_dm_daq(args):
+def stop_daq(args):
     '''Stops the currently running DM DAQ. 
     '''
     exp_name = directories.make_directory_name(args)
@@ -181,7 +181,7 @@ def stop_dm_daq(args):
         log.info('   No active DAQs for this experiment were found')
 
 
-def add_user_dm_experiment(args):
+def add_user(args):
     '''Add a user from the DM experiment.
     '''
     exp_name = directories.make_directory_name(args)
@@ -191,12 +191,12 @@ def add_user_dm_experiment(args):
         log.error('   No appropriate experiment found.')
         return
     try:
-        add_users_dm_experiment(exp_obj, ['d{:d}'.format(args.edit_user_badge)])
+        add_users(exp_obj, ['d{:d}'.format(args.edit_user_badge)])
     except:
         log.error('   Problem adding the user.  Check the badge number')
     
 
-def remove_user_dm_experiment(args):
+def remove_user(args):
     '''Remove a user from the DM experiment.
     '''
     exp_name = directories.make_directory_name(args)
@@ -219,7 +219,7 @@ def remove_user_dm_experiment(args):
         log.error('   Problem removing the user.  Check the badge number')
 
 
-def list_users_dm_experiment(args):
+def list_users(args):
     '''Lists the users on the current experiment in a nice format.
     '''
     log.info('Listing the users on the DM experiment')

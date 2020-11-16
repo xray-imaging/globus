@@ -72,34 +72,34 @@ def dm_init(args):
     * Create an experiment in the DM system.
     * Add users to this experiment
     '''
-    new_exp = dm.create_dm_experiment(args)
+    new_exp = dm.create_experiment(args)
     user_list = dm.make_dm_username_list(args)
     log.info('Adding users from the current proposal to the DM experiment.')
-    dm.add_users_dm_experiment(new_exp, user_list)
+    dm.add_users(new_exp, user_list)
 
 
 def start_daq(args):
     '''Start a Data Management DAQ on the analysis machine directory.
     '''
-    dm.start_dm_daq(args)
+    dm.start_daq(args)
 
     
 def stop_daq(args):
     '''Stop the Data Management DAQ set up for this experiment.
     '''
-    dm.stop_dm_daq(args)
+    dm.stop_daq(args)
 
 
 def add_user(args):
-    dm.add_user_dm_experiment(args)
+    dm.add_user(args)
 
 
 def remove_user(args):
-    dm.remove_user_dm_experiment(args)
+    dm.remove_user(args)
 
 
 def list_users(args):
-    dm.list_users_dm_experiment(args)
+    dm.list_users(args)
 
 
 def main():
