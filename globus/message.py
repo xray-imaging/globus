@@ -6,7 +6,7 @@ from email.message import EmailMessage
 from dmagic import scheduling
 
 from globus import log
-from globus import voyager_setup
+from globus import dm
 
 def message_file_name(args):
     return os.path.join(pathlib.Path(__file__).parent, args.globus_message_file)
@@ -19,7 +19,7 @@ def message(args):
     with open(globus_message_file, 'w') as mess_file2:
         for line in temp_mess_file:
             if line.startswith('Data link:'):
-                line = 'Data link: {:s}'.format(voyager_setup.make_data_link(args))
+                line = 'Data link: {:s}'.format(dm.make_data_link(args))
             mess_file2.write(line)
 
     with open(globus_message_file, 'r') as mess_file3:        
@@ -50,17 +50,17 @@ def send_email(args):
         s.quit()
     elif (args.globus_server_name == 'petrel'):
         # # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
-        # # to create your project app_id. Once is set put it in petrel_setup.config app-id field
+        # # to create your project app_id. Once is set put it in globus.config app-id field
         app_id = args.app_id
-        ac, tc = petrel_setup.create_clients(app_id)
-        petrel_setup.show_endpoints(args, ac, tc)
+        ac, tc = globus.create_clients(app_id)
+        globus.show_endpoints(args, ac, tc)
 
         # server_top_dir = args.globus_server_top_dir
 
         # year_month, pi_last_name, pi_email = pv.update_experiment_info(args)
 
         log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
-        petrel_setup.create_globus_dir(args, ac, tc)
+        globus.create_globus_dir(args, ac, tc)
 
         # Pull custom email text from file
         # message = args.msg
@@ -79,7 +79,7 @@ def send_email(args):
         for email in emails:
             args.pi_email = email
             log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-            petrel_setup.share_globus_dir(args, ac, tc)
+            globus.share_globus_dir(args, ac, tc)
     else:
         log.error("%s is not a supported globus server" % args.globus_server_name)
 
