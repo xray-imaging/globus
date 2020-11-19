@@ -127,7 +127,7 @@ def share_globus_dir(args,
       'path': directory_full_path,
       'permissions': 'r',
       'notify_email': args.pi_email,
-      'notify_message': args.msg
+      'notify_message': args.msg.as_string()
     }
 
     try: 
