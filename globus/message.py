@@ -73,8 +73,8 @@ def send_email(args):
 
         users = scheduling.get_current_users(args)
         emails = scheduling.get_current_emails(users, exclude_pi=False)
-        emails.append(args.support_primary_email)
-        emails.append(args.support_secondary_email)
+        emails.append(args.primary_beamline_contact_email)
+        emails.append(args.secondary_beamline_contact_email)
         for email in emails:
             args.pi_email = email
             log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
