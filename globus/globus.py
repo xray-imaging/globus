@@ -1,5 +1,7 @@
-from globus import log
 import globus_sdk
+
+from globus import log
+from globus import pv
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
@@ -69,7 +71,7 @@ def create_globus_dir(args,
                     ac,              # Authorize client  
                     tc):             # Transfer client
 
-    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
+    year_month, pi_last_name, prop_number, prop_title = pv.update_experiment_info(args)
     date_dir_path = args.globus_server_top_dir + year_month + '/'
     pi_last_name_dir_path = args.globus_server_top_dir + year_month + '/' + pi_last_name + '/'
 

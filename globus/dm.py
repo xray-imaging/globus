@@ -260,7 +260,7 @@ def make_data_link(args):
     target_exp = exp_api.getExperimentByName(exp_name)
     year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
     output_link = 'https://app.globus.org/file-manager?origin_id='
-    output_link += args.globus_server_id
+    output_link += args.globus_server_uuid
     output_link += '&origin_path='
     target_dir = args.globus_server_top_dir + '/' + year_month + '/' + exp_name + '/\n'
     output_link += target_dir.replace('/','%2F') 

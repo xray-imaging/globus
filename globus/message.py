@@ -7,6 +7,7 @@ from dmagic import scheduling
 
 from globus import log
 from globus import dm
+from globus import globus
 
 def message_file_name(args):
     return os.path.join(pathlib.Path(__file__).parent, args.globus_message_file)
@@ -51,7 +52,7 @@ def send_email(args):
     elif (args.globus_server_name == 'petrel'):
         # # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
         # # to create your project app_id. Once is set put it in globus.config app-id field
-        app_id = args.app_id
+        app_id = args.globus_app_uuid
         ac, tc = globus.create_clients(app_id)
         globus.show_endpoints(args, ac, tc)
 

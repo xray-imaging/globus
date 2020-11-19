@@ -82,11 +82,11 @@ SECTIONS['globus'] = {
         'type': str,
         'default': 'voyager',
         'help': "Globus server name. Options are: voyager or petrel"},
-    'globus-server-id': {
-        'default': '9c9cb97e-de86-11e6-9d15-22000a1e3b52',
+    'globus-server-uuid': {
+        'default': 'e133a81a-6d04-11e5-ba46-22000b92c6ec',
         'type': str,
-        'help': 'Globus ID of the endpoint for formation of a direct email link'},
-    'globus-app-id': {
+        'help': 'Globus UUID of the endpoint for formation of a direct email link, Options are e133a81a-6d04-11e5-ba46-22000b92c6ec for petrel and 9c9cb97e-de86-11e6-9d15-22000a1e3b52 for voyager'},
+    'globus-app-uuid': {
         'default': 'a9badd00-39c3-4473-b180-8bccc113ba1d', # for usr32idc/petrel
         'type': str,
         'help': "Globus app UUID, to create one see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client",
