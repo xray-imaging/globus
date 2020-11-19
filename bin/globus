@@ -138,6 +138,16 @@ def main():
   
     args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
 
+    if (args.globus_server_name == 'voyager'):
+        args.globus_server_uuid = '9c9cb97e-de86-11e6-9d15-22000a1e3b52'
+        args.globus_server_top_dir = '/gdata/dm/7BM'
+    elif (args.globus_server_name == 'petrel'):
+        args.globus_server_uuid = 'e133a81a-6d04-11e5-ba46-22000b92c6ec'
+        args.globus_app_uuid = 'a9badd00-39c3-4473-b180-8bccc113ba1d', # for usr32idc/petrel
+        args.globus_server_top_dir = '/2-BM/'
+    else:
+        log.error("%s is not a supported globus server" % args.globus_server_name)
+
     try:
         args._func(args)
     except RuntimeError as e:
