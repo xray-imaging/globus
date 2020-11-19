@@ -39,17 +39,12 @@ def email(args):
     with information on how to get their data from Voyager.
     '''
     log.info('Sending e-mail to users on the DM experiment')
-    username_list = dm.make_username_list(args)
-    args.email_list = dm.make_user_email_list(username_list)
-    if len(args.email_list) == 0:
-        log.warning('   No valid e-mail addresses')
-        return
-
+    # prepare the message
     args.msg = message.message(args)
     log.info('   Message to users start:')  
     log.info('   *** %s' % args.msg)  
     log.info('   Message to users end')  
-
+    # send the message
     message.send_email(args)
 
 
@@ -141,6 +136,8 @@ def main():
 
     args = config.parse_known_args(parser, subparser=True)
   
+    args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
+
     try:
         args._func(args)
     except RuntimeError as e:

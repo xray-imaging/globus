@@ -71,9 +71,9 @@ def create_globus_dir(args,
                     ac,              # Authorize client  
                     tc):             # Transfer client
 
-    year_month, pi_last_name, prop_number, prop_title = pv.update_experiment_info(args)
-    date_dir_path = args.globus_server_top_dir + year_month + '/'
-    pi_last_name_dir_path = args.globus_server_top_dir + year_month + '/' + pi_last_name + '/'
+
+    date_dir_path = args.globus_server_top_dir + args.year_month + '/'
+    pi_last_name_dir_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
 
     try:
       response = tc.operation_mkdir(args.globus_server_uuid, path=date_dir_path)
@@ -118,8 +118,7 @@ def share_globus_dir(args,
     user_id = r['identities'][0]['id']
     # log.info(r, user_id)
 
-    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
-    directory_full_path = args.globus_server_top_dir + year_month + '/' + pi_last_name + '/'
+    directory_full_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
     # Set access control and notify user
     rule_data = {
       'DATA_TYPE': 'access',

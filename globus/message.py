@@ -58,8 +58,6 @@ def send_email(args):
 
         # server_top_dir = args.globus_server_top_dir
 
-        # year_month, pi_last_name, pi_email = pv.update_experiment_info(args)
-
         log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
         globus.create_globus_dir(args, ac, tc)
 
@@ -71,7 +69,7 @@ def send_email(args):
         # log.info('*** %s' % args.globus_message)  
         # log.info('Message to users end')  
 
-        new_dir = year_month + '/' + pi_last_name
+        new_dir = args.year_month + '/' + args.pi_last_name
 
         users = scheduling.get_current_users(args)
         emails = scheduling.get_current_emails(users, exclude_pi=False)

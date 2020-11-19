@@ -22,8 +22,7 @@ def make_dm_username_list(args):
     '''Make a list of DM usernames 'd+badge#' from the current proposal (GUP number).
     '''
     log.info('Making a list of DM system usernames from target proposal')
-    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
-    target_prop = bss_api.getProposal(str(prop_number))
+    target_prop = bss_api.getProposal(str(args.prop_number))
     users = target_prop['experimenters']
     log.info('   Adding the primary beamline contact')
     user_ids = {'d' + str(args.primary_beamline_contact_badge)}
@@ -82,7 +81,7 @@ def create_experiment(args):
     ----------
 
     args : list
-        args is used to extract current year_month, pi_lastname, prop_number, 
+        args is used to extract current year_month, pi_last_name, prop_number, 
         prop_title and generate a unique DM experiment name in the form of 
         year-month-PILastName-ProposalNumber
 
@@ -91,7 +90,6 @@ def create_experiment(args):
 
     Experiment object
     '''
-    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
     dir_name = directories.make_directory_name(args)
     log.info('See if there is already a DM experiment')
     try:
@@ -99,8 +97,8 @@ def create_experiment(args):
         log.warning('   Experiment already exists')
         return old_exp 
     except:
-        log.info('Creating new DM experiment: {0:s}/{1:s}'.format(year_month, dir_name))
-    target_prop = bss_api.getProposal(str(prop_number))
+        log.info('Creating new DM experiment: {0:s}/{1:s}'.format(args.year_month, dir_name))
+    target_prop = bss_api.getProposal(str(args.prop_number))
     start_datetime = datetime.datetime.strptime(
                         target_prop['startTime'],
                         '%Y-%m-%d %H:%M:%S')
@@ -108,7 +106,7 @@ def create_experiment(args):
                         target_prop['endTime'],
                         '%Y-%m-%d %H:%M:%S')
     new_exp = exp_api.addExperiment(dir_name, typeName = args.experiment_type,
-                        description = prop_title, rootPath = year_month,
+                        description = args.prop_title, rootPath = args.year_month,
                         startDate = start_datetime.strftime('%d-%b-%y'),
                         endDate = end_datetime.strftime('%d-%b-%y'))
     log.info('   Experiment successfully created!')
@@ -258,10 +256,10 @@ def make_data_link(args):
     '''
     exp_name = directories.make_directory_name(args)
     target_exp = exp_api.getExperimentByName(exp_name)
-    year_month, pi_lastname, prop_number, prop_title = pv.update_experiment_info(args)
+
     output_link = 'https://app.globus.org/file-manager?origin_id='
     output_link += args.globus_server_uuid
     output_link += '&origin_path='
-    target_dir = args.globus_server_top_dir + '/' + year_month + '/' + exp_name + '/\n'
+    target_dir = args.globus_server_top_dir + '/' + args.year_month + '/' + exp_name + '/\n'
     output_link += target_dir.replace('/','%2F') 
     return output_link
