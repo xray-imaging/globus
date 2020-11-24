@@ -1,1 +1,2 @@
-include globus/message.txt
+include globus/message-2bm.txt
+include globus/message-7bm.txt

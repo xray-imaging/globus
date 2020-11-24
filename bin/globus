@@ -1,22 +1,21 @@
 #!/local/user2bmb/Software/anaconda/bin/python
 # -*- coding: utf-8 -*-
 import os
+import re
 import sys
 import argparse
+import pathlib
 import logging
 import time
-import re
-import smtplib
-from email.message import EmailMessage
 from datetime import datetime
-
 from dmagic import scheduling
 
 from globus import config
-from globus import voyager_setup
+from globus import dm
 from globus import log
 from globus import pv
 from globus import directories
+from globus import message
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
@@ -30,6 +29,9 @@ def init(args):
     else:
         raise RuntimeError("{0} already exists".format(args.config))
 
+def show(args):
+    # show args from default (config.py) if not changed
+    config.show_config(args)
 
 def email(args):
 
@@ -37,39 +39,13 @@ def email(args):
     with information on how to get their data from Voyager.
     '''
     log.info('Sending e-mail to users on the DM experiment')
-    username_list = voyager_setup.make_exp_username_list(args)
-    email_list = voyager_setup.make_user_email_list(username_list)
-    if len(email_list) == 0:
-        log.warning('   No valid e-mail addresses')
-        return
-    #Add in the actual data link to the message
-    with open(args.globus_message_file, 'r') as mess_file:
-        temp_mess_file = mess_file.readlines()
-    with open(args.globus_message_file, 'w') as mess_file2:
-        for line in temp_mess_file:
-            if line.startswith('Data link:'):
-                line = 'Data link: {:s}'.format(voyager_setup.make_email_link(args))
-            mess_file2.write(line)
-
-    with open(args.globus_message_file, 'r') as mess_file3:        
-        msg = EmailMessage()
-        msg.set_content(mess_file3.read())
-
+    # prepare the message
+    args.msg = message.message(args)
     log.info('   Message to users start:')  
-    log.info('   *** %s' % args.globus_message)  
+    log.info('   *** %s' % args.msg)  
     log.info('   Message to users end')  
-
-    msg['From'] = args.support_primary_email
-    msg['Subject'] = 'Important information on APS experiment'
-    s = smtplib.SMTP('localhost')
-    for em in email_list:
-        if msg['To'] is None:
-            msg['To'] = em
-        else:
-            msg.replace_header('To',em)
-        log.info('   Sending informational message to {:s}'.format(em))
-        s.send_message(msg)
-    s.quit()
+    # send the message
+    message.send_email(args)
 
 
 def dirs(args):
@@ -86,39 +62,39 @@ def dirs(args):
     directories.mkdir(remote_server, analysis_dir_name)
  
 
-def user_init(args):
+def dm_init(args):
     '''Initiate actions for the start of an experiment.
     * Create an experiment in the DM system.
     * Add users to this experiment
     '''
-    new_exp = voyager_setup.create_dm_experiment(args)
-    user_list = voyager_setup.make_proposal_username_list(args)
+    new_exp = dm.create_experiment(args)
+    user_list = dm.make_dm_username_list(args)
     log.info('Adding users from the current proposal to the DM experiment.')
-    voyager_setup.experiment_add_users(new_exp, user_list)
+    dm.add_users(new_exp, user_list)
 
 
 def start_daq(args):
     '''Start a Data Management DAQ on the analysis machine directory.
     '''
-    voyager_setup.start_dm_daq(args)
+    dm.start_daq(args)
 
     
 def stop_daq(args):
     '''Stop the Data Management DAQ set up for this experiment.
     '''
-    voyager_setup.stop_dm_daq(args)
+    dm.stop_daq(args)
 
 
 def add_user(args):
-    voyager_setup.add_user(args)
+    dm.add_user(args)
 
 
 def remove_user(args):
-    voyager_setup.remove_user(args)
+    dm.remove_user(args)
 
 
 def list_users(args):
-    voyager_setup.list_users(args)
+    dm.list_users(args)
 
 
 def main():
@@ -135,20 +111,19 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', **config.SECTIONS['general']['config'])
-    show_params = config.GLOBUS_PARAMS
-    email_params = config.EMAIL_PARAMS
-    dirs_params = config.GLOBUS_PARAMS
+    globus_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
-        ('init',        init,           (),                             "Create configuration file"),
-        ('email',       email,          email_params,                   "Send email with link to all users on proposal"),
-        ('dirs',        dirs,           dirs_params,                    "Create folders on data collection and data analysis computers"),
-        ('user_init',   user_init,      email_params,                   "Initialize experiment"),
-        ('start_daq',   start_daq,      dirs_params,                   "Initialize DM DAQ"),
-        ('stop_daq',    stop_daq,       dirs_params,                   "Stop DM DAQ"),
-        ('add_user',    add_user,       dirs_params,                   "Add a user to the DM experiment by badge number"),
-        ('list_users',  list_users,     dirs_params,                   "List the users on the current experiment"),
-        ('remove_user', remove_user,    dirs_params,                   "Remove a user from the DM experiment by badge number"),
+        ('init',        init,           (),             "Create configuration file"),
+        ('show',        show,           globus_params,  "Show status"),
+        ('dm_init',     dm_init,        globus_params,  "Initialize DM experiment"),
+        ('dirs',        dirs,           globus_params,  "Create folders on data collection and data analysis computers"),
+        ('list_users',  list_users,     globus_params,  "List the users on the current DM experiment"),
+        ('add_user',    add_user,       globus_params,  "Add a user to the current DM experiment by badge number"),
+        ('remove_user', remove_user,    globus_params,  "Remove a user from the current DM experiment by badge number"),
+        ('email',       email,          globus_params,  "Send email with link to all users on the proposal"),
+        ('start_daq',   start_daq,      globus_params,  "Start DM DAQ"),
+        ('stop_daq',    stop_daq,       globus_params,  "Stop DM DAQ"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')
@@ -161,13 +136,21 @@ def main():
 
     args = config.parse_known_args(parser, subparser=True)
   
+    args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
+
+    if (args.globus_server_name == 'voyager'):
+        args.globus_server_uuid = '9c9cb97e-de86-11e6-9d15-22000a1e3b52'
+        args.globus_server_top_dir = '/gdata/dm/7BM'
+    elif (args.globus_server_name == 'petrel'):
+        args.globus_server_uuid = 'e133a81a-6d04-11e5-ba46-22000b92c6ec'
+        args.globus_app_uuid = 'a9badd00-39c3-4473-b180-8bccc113ba1d' # for usr32idc/petrel
+        args.globus_server_top_dir = '/2-BM/'
+        print(args.globus_server_uuid)
+    else:
+        log.error("%s is not a supported globus server" % args.globus_server_name)
+
     try:
-        # load args from default (config.py) if not changed
-        config.log_values(args)
         args._func(args)
-        # undate globus.config file
-        sections = config.GLOBUS_PARAMS
-        config.write(args.config, args=args, sections=sections)
     except RuntimeError as e:
         log.error(str(e))
         sys.exit(1)
