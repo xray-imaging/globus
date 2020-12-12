@@ -24,7 +24,8 @@ __version__ = "0.0.1"
 __docformat__ = 'restructuredtext en'
 
 
-def init(args):
+def set_config(args):
+    print(str(args.config))
     if not os.path.exists(str(args.config)):
         config.write(str(args.config))
     else:
@@ -66,20 +67,22 @@ def dirs(args):
     directories.mkdir(remote_server, analysis_dir_name)
  
 
-def dm_init(args):
-    '''Initiate actions for the start of an experiment.
-    * Create an experiment in the DM system.
-    * Add users to this experiment
+def init(args):
+    '''Initiate data management
     '''
+    # Create an experiment in the DM system
+    # Add users to this experiment
     if (args.globus_server_name == 'voyager'):
         new_exp = dm.create_experiment(args)
         user_list = dm.make_dm_username_list(args)
         log.info('Adding users from the current proposal to the DM experiment.')
         dm.add_users(new_exp, user_list)
+    # Create or refresh a globus access token
+    # Create directory on the globus server 
     elif (args.globus_server_name == 'petrel'):
         globus.refresh_globus_token(args)
         ac, tc = globus.create_clients(args)
-        log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+        log.info('Creating user directory on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
         globus.create_globus_dir(args, ac, tc)
 
 def start_daq(args):
@@ -123,9 +126,9 @@ def main():
     globus_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
-        ('init',        init,           (),             "Create configuration file"),
+        ('config',      set_config,     globus_params,  "Create configuration file"),
         ('show',        show,           globus_params,  "Show status"),
-        ('dm_init',     dm_init,        globus_params,  "Initialize DM experiment"),
+        ('init',        init,           globus_params,  "Initialize data mamagement"),
         ('dirs',        dirs,           globus_params,  "Create folders on data collection and data analysis computers"),
         ('list_users',  list_users,     globus_params,  "List the users on the current DM experiment"),
         ('add_user',    add_user,       globus_params,  "Add a user to the current DM experiment by badge number"),

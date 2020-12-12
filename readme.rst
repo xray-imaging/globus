@@ -58,12 +58,17 @@ then:
 
     globus -h for help
         
-    globus init
+    globus set
         Creates a globus.conf default file
 
-    globus dm_init 
-        Reads the PV data and if using a DM server: creates an experiment and adds users from the proposal or if using a Globus server: creates/refresh an authentication token and creates an experiment
-
+    globus init 
+        Initialize data mamagement. 
+        If using a DM server:
+            Create an experiment in the DM system
+            Add users to this experiment
+        if using a Globus server: 
+            Create or refresh a globus access token
+            Create directory on the globus server 
     globus dirs
         Checks for directories on the analysis and detector computers and creates them, as needed
 
@@ -93,7 +98,7 @@ Typical Workflow
 
 For DM server::
 
-    $ globus dm_init
+    $ globus init
     $ globus dirs
     $ globus list_users
     $ globus add_user --edit-user-badge 123456
@@ -102,6 +107,6 @@ For DM server::
 
 For Globus server::
 
-    $ globus dm_init
+    $ globus init
     $ globus dirs
     $ globus email 

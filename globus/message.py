@@ -55,7 +55,7 @@ def send_email(args):
         # # to create your project app_id. Once is set put it in globus.config app-id field
         ac, tc = globus.create_clients(args)
         log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
-        # try to create the directories to share on the globus server in case after the globus dm_init the pi last name was manually changed
+        # try to create the directories to share on the globus server in case after the globus init the pi last name was manually changed
         globus.create_globus_dir(args, ac, tc)
 
         new_dir = args.year_month + '/' + args.pi_last_name
