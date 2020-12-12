@@ -16,6 +16,7 @@ from globus import log
 from globus import pv
 from globus import directories
 from globus import message
+from globus import globus
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
@@ -32,6 +33,9 @@ def init(args):
 def show(args):
     # show args from default (config.py) if not changed
     config.show_config(args)
+    if (args.globus_server_name == 'petrel'):
+        ac, tc = globus.create_clients(args)
+        globus.show_endpoints(args, ac, tc)
 
 def email(args):
 
@@ -67,11 +71,16 @@ def dm_init(args):
     * Create an experiment in the DM system.
     * Add users to this experiment
     '''
-    new_exp = dm.create_experiment(args)
-    user_list = dm.make_dm_username_list(args)
-    log.info('Adding users from the current proposal to the DM experiment.')
-    dm.add_users(new_exp, user_list)
-
+    if (args.globus_server_name == 'voyager'):
+        new_exp = dm.create_experiment(args)
+        user_list = dm.make_dm_username_list(args)
+        log.info('Adding users from the current proposal to the DM experiment.')
+        dm.add_users(new_exp, user_list)
+    elif (args.globus_server_name == 'petrel'):
+        globus.refresh_globus_token(args)
+        ac, tc = globus.create_clients(args)
+        log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+        globus.create_globus_dir(args, ac, tc)
 
 def start_daq(args):
     '''Start a Data Management DAQ on the analysis machine directory.
@@ -145,9 +154,9 @@ def main():
         args.globus_server_uuid = 'e133a81a-6d04-11e5-ba46-22000b92c6ec'
         args.globus_app_uuid = 'a9badd00-39c3-4473-b180-8bccc113ba1d' # for usr32idc/petrel
         args.globus_server_top_dir = '/2-BM/'
-        print(args.globus_server_uuid)
     else:
         log.error("%s is not a supported globus server" % args.globus_server_name)
+        exit()
 
     try:
         args._func(args)

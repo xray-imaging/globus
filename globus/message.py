@@ -34,6 +34,7 @@ def message(args):
 def send_email(args):
 
     log.info("email will contain %s download data link", args.globus_server_name)
+    log.info("send email to users?")
     if not yes_or_no('   *** Yes or No'):                
         log.info(' ')
         log.warning('   *** Message not not sent')
@@ -47,27 +48,15 @@ def send_email(args):
             else:
                 args.msg.replace_header('To',em)
             log.info('   Sending informational message to {:s}'.format(em))
-            # s.send_message(args.msg) # testing
+            s.send_message(args.msg)
         s.quit()
     elif (args.globus_server_name == 'petrel'):
         # # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
         # # to create your project app_id. Once is set put it in globus.config app-id field
-        app_id = args.globus_app_uuid
-        ac, tc = globus.create_clients(app_id)
-        globus.show_endpoints(args, ac, tc)
-
-        # server_top_dir = args.globus_server_top_dir
-
+        ac, tc = globus.create_clients(args)
         log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+        # try to create the directories to share on the globus server in case after the globus dm_init the pi last name was manually changed
         globus.create_globus_dir(args, ac, tc)
-
-        # Pull custom email text from file
-        # message = args.msg
-        # with open (args.globus_message_file, "r") as myfile:
-        #     args.globus_message=myfile.read()
-        # log.info('Message to users start:')  
-        # log.info('*** %s' % args.globus_message)  
-        # log.info('Message to users end')  
 
         new_dir = args.year_month + '/' + args.pi_last_name
 
