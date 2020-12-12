@@ -8,6 +8,7 @@ from collections import OrderedDict
 from globus import log
 
 CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
+TOKEN_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'token.npy')
 
 SECTIONS = OrderedDict()
 
@@ -16,6 +17,11 @@ SECTIONS['general'] = {
         'default': CONFIG_FILE_NAME,
         'type': str,
         'help': "File name of configuration",
+        'metavar': 'FILE'},
+    'globus-token-file': {
+        'default': TOKEN_FILE_NAME,
+        'type': str,
+        'help': "File name containing the globus access token",
         'metavar': 'FILE'},
     'verbose': {
         'default': True,
