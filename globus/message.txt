@@ -1,9 +1,10 @@
-We are ready to start data collection.  At the end of this message you will find the URL to access your data.
+This is an automated message with important information about your experiment.  Your data will be automatically transferred to Voyager, one of the main APS data storage systems.  The transfer will occur from the data analysis computer (mach), so any test reconstructions you do at the beamline should also be backed up to Voyager.  Please note that this message was automatically sent to all users on the proposal.  If other users not on the proposal (for example, students or collaborators) should have this information, please forward it to them.
 
-Please download and make a copy of the data (raw with a backup) within 4 weeks. After that time, the data will be deleted from our systems.  If you need more time please send an email to Alan at akastengren@anl.gov
+Your data on Voyager can be accessed through Globus Online, a grid FTP system.  Please go to the link below, or to https://www.globus.org and log in.  Use Argonne National Laboratory as your institution.  Voyager is accessed through the aps#data endpoint.  Your credentials for Voyager are your badge number prepended with a 'd' (for example, for badge number 123456, it would be d123456), with the same password as you use for the GUP and ESAF systems.  If you wish to have other APS users given access to these data (for example, students that were involved in an experiment who weren't on the original proposal), please let Alan know so he can add them as authorized users.
 
-To download data from the APS you need to create a globus account at https://www.globus.org/ using the same email address listed here.
-More information and links can be found at https://docs7bm.readthedocs.io/en/latest/source/manual/download.html
+Data link: 
+
+Please download and make a copy of the data (raw with a backup) within 4 weeks. After that time the data will be subject to deletion from our systems.  If you need more time please send an email to Alan at akastengren@anl.gov.
 
 Below are other useful links:
 
@@ -25,3 +26,5 @@ If you have some interesting/challenging data set that you would like to share w
 https://tomobank.readthedocs.io
 
 Remember to send references to any papers written using data from APS to Alan at akastengren@anl.gov for inclusion in the APS Publications database.  Information on the database and the required acknowledgement statement for the use of APS can be found at https://www.aps.anl.gov/Science/Publications .
+=======
+The 7-BM Team
