@@ -264,6 +264,8 @@ def write(config_file, args=None, sections=None):
     otherwise use the defaults. If *sections* are specified, write values from
     *args* only to those sections, use the defaults on the remaining ones.
     """
+    log.info('Writing initial config file')
+    log.info(config_file)
     config = configparser.ConfigParser()
 
     for section in SECTIONS:
