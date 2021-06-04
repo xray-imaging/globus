@@ -25,4 +25,6 @@ https://tomopy.readthedocs.io/
 If you have some interesting/challenging data set that you would like to share with the community submit a pull request at:
 https://tomobank.readthedocs.io
 
+Remember to send references to any papers written using data from APS to Alan at akastengren@anl.gov for inclusion in the APS Publications database.  Information on the database and the required acknowledgement statement for the use of APS can be found at https://www.aps.anl.gov/Science/Publications .
+=======
 The 7-BM Team
