@@ -58,32 +58,37 @@ then:
 
     globus -h for help
         
-    globus init
+    globus set
         Creates a globus.conf default file
 
-    globus dm_init 
-        Reads the PV data, creates a DM experiment, and adds users from the proposal to the DM experiment 
-
+    globus init 
+        Initialize data mamagement. 
+        If using a DM server:
+            Create an experiment in the DM system
+            Add users to this experiment
+        if using a Globus server: 
+            Create or refresh a globus access token
+            Create directory on the globus server 
     globus dirs
         Checks for directories on the analysis and detector computers and creates them, as needed
 
     globus email
-        E-mails all users on an experiment with information on how to access their data on Voyager
+        E-mails all users on an experiment with information on how to access their data
 
     globus start_daq
-        Starts automated file upload from the analysis computer to Voyager
+        Starts automated file upload from the analysis computer to a DM server
     
     globus stop_daq
-        Stops automated file uploads for this experiment
+        Stops automated file uploads for this experiment to a DM server
 
     globus add_user --edit-user-badge 123456
-        Adds the user with the badge 123456 to the experiment
+        Adds the user with the badge 123456 to a DM experiment
 
     globus list_users
         Lists the users (name and badge numbers) that are part of the DM experiment
 
     globus remove_user --edit-user-badge 123456
-        Removes the user with badge 123456 from the experiment
+        Removes the user with badge 123456 from the DM experiment
 
         data collection and data analysis machines need to be configured in the local section of the `config <https://github.com/xray-imaging/globus/blob/master/globus/config.py>`_ file. The directory creation requires ssh access to the data collection and data analysis machines, if prefered not to use a password see `SSH login without password <http://www.linuxproblem.org/art_9.html>`_.
         
@@ -91,11 +96,17 @@ then:
 Typical Workflow
 ----------------
 
-::
+For DM server::
 
-    $ globus dm_init
+    $ globus init
     $ globus dirs
     $ globus list_users
     $ globus add_user --edit-user-badge 123456
     $ globus remove_user --edit-user-badge 987654 
+    $ globus email 
+
+For Globus server::
+
+    $ globus init
+    $ globus dirs
     $ globus email 

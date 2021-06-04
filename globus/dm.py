@@ -186,7 +186,7 @@ def add_user(args):
     try:
         exp_obj = exp_api.getExperimentByName(exp_name)
     except:
-        log.error('   No appropriate experiment found.')
+        log.error('   No appropriate DM experiment found.')
         return
     try:
         add_users(exp_obj, ['d{:d}'.format(args.edit_user_badge)])
@@ -209,7 +209,7 @@ def remove_user(args):
     try:
         exp_obj = exp_api.getExperimentByName(exp_name)
     except:
-        log.error('    No appropriate experiment found.')
+        log.error('    No appropriate DM experiment found.')
         return
     try:
         user_api.deleteUserExperimentRole(dm_username, 'User', exp_name)
@@ -225,7 +225,7 @@ def list_users(args):
     try:
         exp_obj = exp_api.getExperimentByName(exp_name)
     except:
-        log.error('   No appropriate experiment found.')
+        log.error('   No appropriate DM experiment found.')
         return
     username_list = exp_obj['experimentUsernameList']
     if len(username_list) == 0:
