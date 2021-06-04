@@ -22,7 +22,7 @@ def make_dm_username_list(args):
     '''Make a list of DM usernames 'd+badge#' from the current proposal (GUP number).
     '''
     log.info('Making a list of DM system usernames from target proposal')
-    target_prop = bss_api.getProposal(str(args.prop_number))
+    target_prop = bss_api.getProposal(str(args.gup_number))
     users = target_prop['experimenters']
     log.info('   Adding the primary beamline contact')
     user_ids = {'d' + str(args.primary_beamline_contact_badge)}
@@ -98,15 +98,15 @@ def create_experiment(args):
         return old_exp 
     except:
         log.info('Creating new DM experiment: {0:s}/{1:s}'.format(args.year_month, dir_name))
-    target_prop = bss_api.getProposal(str(args.prop_number))
+    target_prop = bss_api.getProposal(str(args.gup_number))
     start_datetime = datetime.datetime.strptime(
                         target_prop['startTime'],
-                        '%Y-%m-%d %H:%M:%S')
+                        '%Y-%m-%d %H:%M:%S%z')
     end_datetime = datetime.datetime.strptime(
                         target_prop['endTime'],
-                        '%Y-%m-%d %H:%M:%S')
+                        '%Y-%m-%d %H:%M:%S%z')
     new_exp = exp_api.addExperiment(dir_name, typeName = args.experiment_type,
-                        description = args.prop_title, rootPath = args.year_month,
+                        description = args.gup_title, rootPath = args.year_month,
                         startDate = start_datetime.strftime('%d-%b-%y'),
                         endDate = end_datetime.strftime('%d-%b-%y'))
     log.info('   Experiment successfully created!')

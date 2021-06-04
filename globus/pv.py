@@ -30,6 +30,4 @@ def update_experiment_info(args):
     pi_email = global_PVs['UserEmail'].get(as_string=True)
     gup_number = global_PVs['ProposalNumber'].get(as_string=True)   
     gup_title = global_PVs['ProposalTitle'].get(as_string=True)
-
     return year_month, pi_last_name, gup_number, gup_title
- 

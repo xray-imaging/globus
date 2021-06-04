@@ -148,6 +148,16 @@ def main():
 
     args = config.parse_known_args(parser, subparser=True)
   
+    
+    #Init here, otherwise we don't have parameters to do the following updates
+    if args._func == init:
+        try:
+            args._func(args)
+            return
+        except RuntimeError as e:
+            log.error(str(e))
+            sys.exit(1)
+         
     args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
 
     if (args.globus_server_name == 'voyager'):

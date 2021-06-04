@@ -31,6 +31,7 @@ def message(args):
 
     return msg
 
+
 def send_email(args):
 
     log.info("email will contain %s download data link", args.globus_server_name)
@@ -40,9 +41,14 @@ def send_email(args):
         log.warning('   *** Message not not sent')
         return False
 
+    users = scheduling.get_current_users(args)
+    emails = scheduling.get_current_emails(users, exclude_pi=False)
+    emails.append(args.primary_beamline_contact_email)
+    emails.append(args.secondary_beamline_contact_email)
+
     if (args.globus_server_name == 'voyager'):
         s = smtplib.SMTP('localhost')
-        for em in args.email_list:
+        for em in emails:
             if args.msg['To'] is None:
                 args.msg['To'] = em
             else:
@@ -60,10 +66,6 @@ def send_email(args):
 
         new_dir = args.year_month + '/' + args.pi_last_name
 
-        users = scheduling.get_current_users(args)
-        emails = scheduling.get_current_emails(users, exclude_pi=False)
-        emails.append(args.primary_beamline_contact_email)
-        emails.append(args.secondary_beamline_contact_email)
         for email in emails:
             args.pi_email = email
             log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
