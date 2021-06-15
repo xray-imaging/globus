@@ -150,6 +150,9 @@ def main():
   
     
     #Init here, otherwise we don't have parameters to do the following updates
+    
+    args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
+
     if args._func == init:
         try:
             args._func(args)
