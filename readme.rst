@@ -17,6 +17,15 @@ Tasks
 - Send to the user an email with the URL to the shared folder
 - Using the --schedule options share and email is sent to all users listed in current beamline schedule
 
+Dependencies
+------------
+
+`globus` depends on the Globus SDK and paramiko.  These can be downloaded from conda via::
+
+    $ conda install -c conda-forge globus-sdk
+    $ conda install -c anaconda paramiko
+
+
 Installation
 ------------
 
