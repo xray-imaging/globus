@@ -1,26 +1,32 @@
 '''
-    Log Lib for Sector 2-BM 
+    globus custom logger
     
 '''
 import logging
 
 logger = logging.getLogger(__name__)
 
-def info(msg):
-    logger.info(msg)
+def info(msg, *args, **kwargs):
+    logger.info(msg, *args, **kwargs)
 
-def error(msg):
-    logger.error(msg)
+def error(msg, *args, **kwargs):
+    logger.error(msg, *args, **kwargs)
 
-def warning(msg):
-    logger.warning(msg)
+def warning(msg, *args, **kwargs):
+    logger.warning(msg, *args, **kwargs)
 
-def setup_custom_logger(lfname, stream_to_console=True):
-    fHandler = logging.FileHandler(lfname)
+def debug(msg, *args, **kwargs):
+    logger.debug(msg, *args, **kwargs)
+
+def setup_custom_logger(lfname=None, stream_to_console=True):
+
     logger.setLevel(logging.DEBUG)
-    file_formatter = logging.Formatter('%(asctime)s - %(levelname)s: %(message)s')
-    fHandler.setFormatter(file_formatter)
-    logger.addHandler(fHandler)
+
+    if (lfname != None):
+        fHandler = logging.FileHandler(lfname)
+        file_formatter = logging.Formatter('%(asctime)s - %(levelname)s: %(message)s')
+        fHandler.setFormatter(file_formatter)
+        logger.addHandler(fHandler)
     if stream_to_console:
         ch = logging.StreamHandler()
         ch.setFormatter(ColoredLogFormatter('%(asctime)s - %(message)s'))

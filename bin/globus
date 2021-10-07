@@ -1,20 +1,22 @@
 #!/local/user2bmb/Software/anaconda/bin/python
 # -*- coding: utf-8 -*-
 import os
+import re
 import sys
 import argparse
+import pathlib
 import logging
 import time
-import re
 from datetime import datetime
-
 from dmagic import scheduling
 
 from globus import config
-from globus import globus
+from globus import dm
 from globus import log
 from globus import pv
-from globus import dm
+from globus import directories
+from globus import message
+from globus import globus
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
@@ -22,84 +24,90 @@ __version__ = "0.0.1"
 __docformat__ = 'restructuredtext en'
 
 
-def init(args):
+def set_config(args):
+    print(str(args.config))
     if not os.path.exists(str(args.config)):
         config.write(str(args.config))
     else:
         raise RuntimeError("{0} already exists".format(args.config))
 
-
 def show(args):
-    # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
-    # to create your project app_id. Once is set put it in globus.config app-id field
-    app_id = args.app_id
-    ac, tc = globus.create_clients(app_id)
-    globus.show_endpoints(args, ac, tc)
-
+    # show args from default (config.py) if not changed
+    config.show_config(args)
+    if (args.globus_server_name == 'petrel'):
+        ac, tc = globus.create_clients(args)
+        globus.show_endpoints(args, ac, tc)
 
 def email(args):
 
-    # # For testing only
-    # if args.schedule:
-    #     users = scheduling.get_users(args)
-    #     emails = scheduling.find_emails(users, exclude_pi=False)
-    #     emails.append(args.support_primary_email)
-    #     emails.append(args.support_secondary_email)
-    #     for email in emails:
-    #         log.info('Sharing %s with %s' % (args.globus_server_top_dir, email))
-    #         # log.info('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, email))
-
-    # # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
-    # # to create your project app_id. Once is set put it in globus.config app-id field
-    app_id = args.app_id
-    ac, tc = globus.create_clients(app_id)
-    globus.show_endpoints(args, ac, tc)
-
-    # server_top_dir = args.globus_server_top_dir
-
-    args.year_month, args.pi_last_name, args.pi_email = pv.update_experiment_info(args)
-
-    log.info('Creating user directories on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
-    globus.create_globus_dir(args, ac, tc)
-
-    # Pull custom email text from file
-    message = args.globus_message
-    with open (args.globus_message_file, "r") as myfile:
-        args.globus_message=myfile.read()
-    log.info('Message to users start:')  
-    log.info('*** %s' % args.globus_message)  
-    log.info('Message to users end')  
-
-    new_dir = args.year_month + '/' + args.pi_last_name
-
-    if args.schedule:
-        users = scheduling.get_users(args)
-        emails = scheduling.find_emails(users, exclude_pi=False)
-        emails.append(args.support_primary_email)
-        emails.append(args.support_secondary_email)
-        for email in emails:
-            args.pi_email = email
-            log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-            globus.share_globus_dir(args, ac, tc)
-    else:
-        log.warning('Sharing %s%s with %s' % (args.globus_server_top_dir, new_dir, args.pi_email))
-        globus.share_globus_dir(args, ac, tc)
+    '''Sends an email to all users on the current experiment 
+    with information on how to get their data from Voyager.
+    '''
+    log.info('Sending e-mail to users on the DM experiment')
+    # prepare the message
+    args.msg = message.message(args)
+    log.info('   Message to users start:')  
+    log.info('   *** %s' % args.msg)  
+    log.info('   Message to users end')  
+    # send the message
+    message.send_email(args)
 
 
 def dirs(args):
-
-    args.year_month, args.pi_last_name, args.pi_email = pv.update_experiment_info(args)
-
     # create directory on detector computer
+    log.info('Making directory on the detector computer {:s}'.format(args.detector))
+    detector_dir_name = directories.create_detector_dir_name(args)
     remote_server = args.detector_user_name + '@' + args.detector
-    remote_dir = args.detector_top_dir + args.year_month + '/' + args.pi_last_name + '/'
-    dm.mkdir(remote_server, remote_dir)
+    directories.mkdir(remote_server, detector_dir_name)
 
-    # create directory on data alysis computer
+    # create directory on data analysis computer
+    log.info('Making directory on the analysis computer {:s}'.format(args.analysis))
+    analysis_dir_name = directories.create_analysis_dir_name(args)
     remote_server = args.analysis_user_name + '@' + args.analysis
-    remote_dir = args.analysis_top_dir + args.year_month + '/' + args.pi_last_name + '/'
-    dm.mkdir(remote_server, remote_dir)
+    directories.mkdir(remote_server, analysis_dir_name)
  
+
+def init(args):
+    '''Initiate data management
+    '''
+    # Create an experiment in the DM system
+    # Add users to this experiment
+    if (args.globus_server_name == 'voyager'):
+        new_exp = dm.create_experiment(args)
+        user_list = dm.make_dm_username_list(args)
+        log.info('Adding users from the current proposal to the DM experiment.')
+        dm.add_users(new_exp, user_list)
+    # Create or refresh a globus access token
+    # Create directory on the globus server 
+    elif (args.globus_server_name == 'petrel'):
+        globus.refresh_globus_token(args)
+        ac, tc = globus.create_clients(args)
+        log.info('Creating user directory on server %s:%s' % (args.globus_server_uuid, args.globus_server_top_dir))
+        globus.create_globus_dir(args, ac, tc)
+
+def start_daq(args):
+    '''Start a Data Management DAQ on the analysis machine directory.
+    '''
+    dm.start_daq(args)
+
+    
+def stop_daq(args):
+    '''Stop the Data Management DAQ set up for this experiment.
+    '''
+    dm.stop_daq(args)
+
+
+def add_user(args):
+    dm.add_user(args)
+
+
+def remove_user(args):
+    dm.remove_user(args)
+
+
+def list_users(args):
+    dm.list_users(args)
+
 
 def main():
     home = os.path.expanduser("~")
@@ -115,16 +123,19 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', **config.SECTIONS['general']['config'])
-    show_params = config.GLOBUS_PARAMS
-    email_params = config.EMAIL_PARAMS
-    dirs_params = config.GLOBUS_PARAMS
+    globus_params = config.GLOBUS_PARAMS
 
     cmd_parsers = [
-        ('init',        init,           (),                             "Create configuration file"),
-        ('show',        show,           show_params,                    "Show endpoints"),
-        ('email',       email,          email_params,                   "Create folder on endpoint and send email with link to user"),
-        ('dirs',        dirs,           dirs_params,                    "Create folders on data collection and data analysis computers"),
-
+        ('config',      set_config,     globus_params,  "Create configuration file"),
+        ('show',        show,           globus_params,  "Show status"),
+        ('init',        init,           globus_params,  "Initialize data mamagement"),
+        ('dirs',        dirs,           globus_params,  "Create folders on data collection and data analysis computers"),
+        ('list_users',  list_users,     globus_params,  "List the users on the current DM experiment"),
+        ('add_user',    add_user,       globus_params,  "Add a user to the current DM experiment by badge number"),
+        ('remove_user', remove_user,    globus_params,  "Remove a user from the current DM experiment by badge number"),
+        ('email',       email,          globus_params,  "Send email with link to all users on the proposal"),
+        ('start_daq',   start_daq,      globus_params,  "Start DM DAQ"),
+        ('stop_daq',    stop_daq,       globus_params,  "Stop DM DAQ"),
     ]
 
     subparsers = parser.add_subparsers(title="Commands", metavar='')
@@ -137,13 +148,34 @@ def main():
 
     args = config.parse_known_args(parser, subparser=True)
   
+    
+    #Init here, otherwise we don't have parameters to do the following updates
+    
+    args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
+
+    if args._func == init:
+        try:
+            args._func(args)
+            return
+        except RuntimeError as e:
+            log.error(str(e))
+            sys.exit(1)
+         
+    args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
+
+    if (args.globus_server_name == 'voyager'):
+        args.globus_server_uuid = '9c9cb97e-de86-11e6-9d15-22000a1e3b52'
+        args.globus_server_top_dir = '/gdata/dm/7BM'
+    elif (args.globus_server_name == 'petrel'):
+        args.globus_server_uuid = 'e133a81a-6d04-11e5-ba46-22000b92c6ec'
+        args.globus_app_uuid = 'a9badd00-39c3-4473-b180-8bccc113ba1d' # for usr32idc/petrel
+        args.globus_server_top_dir = '/2-BM/'
+    else:
+        log.error("%s is not a supported globus server" % args.globus_server_name)
+        exit()
+
     try:
-        # load args from default (config.py) if not changed
-        config.log_values(args)
         args._func(args)
-        # undate globus.config file
-        sections = config.GLOBUS_PARAMS
-        config.write(args.config, args=args, sections=sections)
     except RuntimeError as e:
         log.error(str(e))
         sys.exit(1)

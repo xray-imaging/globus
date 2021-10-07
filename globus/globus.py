@@ -1,5 +1,9 @@
-from globus import log
 import globus_sdk
+import numpy as np
+import time
+
+from globus import log
+from globus import pv
 
 __author__ = "Francesco De Carlo"
 __copyright__ = "Copyright (c) 2019, UChicago Argonne, LLC."
@@ -21,53 +25,105 @@ def show_endpoints(args, ac, tc):
          log.info("*** *** [{}] {}".format(ep["id"], ep["display_name"]))
 
 
-def create_clients(app_id):
-  """
-  Create authorize and transfer clients
-
-  Parameters
-  ----------
-  app_id : App UUID 
-
-  Returns
-  -------
-  ac : Authorize client
-  tc : Transfer client
-    
+def refresh_globus_token(args):
     """
+    Create and save a globus token. The token is valid for 48h.
 
-  client = globus_sdk.NativeAppAuthClient(app_id)
-  client.oauth2_start_flow(refresh_tokens=True)
+    Parameters
+    ----------
+    globus_app_id : App UUID 
+      
+    """
+    try:
+        token_response = np.load(args.globus_token_file, allow_pickle='TRUE').item()
+    except FileNotFoundError:
+        log.error('Globus token is missing. Creating one')
+        # Creating new token
+        # --------------------------------------------
+        globus_app_id = args.globus_app_uuid
+        client = globus_sdk.NativeAppAuthClient(globus_app_id)
+        client.oauth2_start_flow(refresh_tokens=True)
 
-  log.warning('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
+        log.warning('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
 
-  get_input = getattr(__builtins__, 'raw_input', input)
-  auth_code = get_input('Please enter the code you get after login here: ').strip() # pythn 3
-  # auth_code = raw_input('Please enter the code you get after login here: ').strip() # python 2.7
-  
-  token_response = client.oauth2_exchange_code_for_tokens(auth_code)
+        get_input = getattr(__builtins__, 'raw_input', input)
+        auth_code = get_input('Please enter the code you get after login here: ').strip() # pythn 3
+        # auth_code = raw_input('Please enter the code you get after login here: ').strip() # python 2.7
+        token_response = client.oauth2_exchange_code_for_tokens(auth_code)
+        # --------------------------------------------
+        np.save(args.globus_token_file, token_response) 
 
-  # let's get stuff for the Globus Transfer service
-  globus_transfer_data = token_response.by_resource_server['transfer.api.globus.org']
-  # the refresh token and access token, often abbr. as RT and AT
-  transfer_rt = globus_transfer_data['refresh_token']
-  transfer_at = globus_transfer_data['access_token']
-  expires_at_s = globus_transfer_data['expires_at_seconds']
+    # let's get stuff for the Globus Transfer service
+    globus_transfer_data = token_response.by_resource_server['transfer.api.globus.org']
+    # the refresh token and access token, often abbr. as RT and AT
+    transfer_rt = globus_transfer_data['refresh_token']
+    transfer_at = globus_transfer_data['access_token']
+    expires_at_s = globus_transfer_data['expires_at_seconds']
 
-  # Now we've got the data we need, but what do we do?
-  # That "GlobusAuthorizer" from before is about to come to the rescue
-  authorizer = globus_sdk.RefreshTokenAuthorizer(transfer_rt, client, access_token=transfer_at, expires_at=expires_at_s)
-  # and try using `tc` to make TransferClient calls. Everything should just
-  # work -- for days and days, months and months, even years
-  ac = globus_sdk.AuthClient(authorizer=authorizer)
-  tc = globus_sdk.TransferClient(authorizer=authorizer)
+    globus_token_life = expires_at_s - time.time()
+    if (globus_token_life < 0):
+        # Creating new token
+        # --------------------------------------------
+        globus_app_id = args.globus_app_uuid
+        client = globus_sdk.NativeAppAuthClient(globus_app_id)
+        client.oauth2_start_flow(refresh_tokens=True)
 
-  return ac, tc
+        log.warning('Please go to this URL and login: {0}'.format(client.oauth2_get_authorize_url()))
 
+        get_input = getattr(__builtins__, 'raw_input', input)
+        auth_code = get_input('Please enter the code you get after login here: ').strip() # pythn 3
+        # auth_code = raw_input('Please enter the code you get after login here: ').strip() # python 2.7
+        token_response = client.oauth2_exchange_code_for_tokens(auth_code)
+        # --------------------------------------------
+        np.save(args.globus_token_file, token_response) 
+
+    return token_response
+
+
+def create_clients(args):
+    """
+    Create authorize and transfer clients
+
+    Parameters
+    ----------
+    globus_app_id : App UUID 
+
+    Returns
+    -------
+    ac : Authorize client
+    tc : Transfer client
+      
+      """
+    token_response = refresh_globus_token(args)
+    # let's get stuff for the Globus Transfer service
+    globus_transfer_data = token_response.by_resource_server['transfer.api.globus.org']
+    # the refresh token and access token, often abbr. as RT and AT
+    transfer_rt = globus_transfer_data['refresh_token']
+    transfer_at = globus_transfer_data['access_token']
+    expires_at_s = globus_transfer_data['expires_at_seconds']
+
+    globus_token_life = expires_at_s - time.time()
+    log.warning("Globus access token will expire in %2.2f hours", (globus_token_life/3600))
+    # see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client
+    # to create your project app_id. Once is set put it in globus.config app-id field
+    globus_app_id = args.globus_app_uuid
+    client = globus_sdk.NativeAppAuthClient(globus_app_id)
+    client.oauth2_start_flow(refresh_tokens=True)
+    # Now we've got the data we need, but what do we do?
+    # That "GlobusAuthorizer" from before is about to come to the rescue
+    authorizer = globus_sdk.RefreshTokenAuthorizer(transfer_rt, client, access_token=transfer_at, expires_at=expires_at_s)
+    # and try using `tc` to make TransferClient calls. Everything should just
+    # work -- for days and days, months and months, even years
+    ac = globus_sdk.AuthClient(authorizer=authorizer)
+    tc = globus_sdk.TransferClient(authorizer=authorizer)
+
+    return ac, tc
+    
 
 def create_globus_dir(args,
                     ac,              # Authorize client  
                     tc):             # Transfer client
+
 
     date_dir_path = args.globus_server_top_dir + args.year_month + '/'
     pi_last_name_dir_path = args.globus_server_top_dir + args.year_month + '/' + args.pi_last_name + '/'
@@ -124,7 +180,7 @@ def share_globus_dir(args,
       'path': directory_full_path,
       'permissions': 'r',
       'notify_email': args.pi_email,
-      'notify_message': args.globus_message
+      'notify_message': args.msg.as_string()
     }
 
     try: 

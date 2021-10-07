@@ -8,11 +8,7 @@ from collections import OrderedDict
 from globus import log
 
 CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
-MESSAGE_FILE_NAME = os.path.join(pathlib.Path(__file__).parent, 'message.txt')
-
-USERNAME = '123456'
-PASSWORD = 'password'
-BEAMLINE = "2-BM-A,B"
+TOKEN_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'token.npy')
 
 SECTIONS = OrderedDict()
 
@@ -22,87 +18,99 @@ SECTIONS['general'] = {
         'type': str,
         'help': "File name of configuration",
         'metavar': 'FILE'},
+    'globus-token-file': {
+        'default': TOKEN_FILE_NAME,
+        'type': str,
+        'help': "File name containing the globus access token",
+        'metavar': 'FILE'},
     'verbose': {
         'default': True,
         'help': 'Verbose output',
         'action': 'store_true'}}
 
 SECTIONS['scheduling'] = {
-    'username' : {
-        'default': USERNAME,
-        'type': str,
-        'help': "scheduling system username (badge #)"},
-    'password' : {
-        'default': PASSWORD,
-        'type': str,
-        'help': "scheduling system password"},
-    'internal' : {
-        'default' : "https://schedule.aps.anl.gov:8443/beamschedds/springws/",
-        'type': str,
-        'help': "File name of configuration"},
-    'external' : {
-        'default' : "https://schedule.aps.anl.gov/beamschedds/springws/",
-        'type': str,
-        'help': "scheduling system hosts"},
     'beamline' : {
-        'default' : BEAMLINE,
+        'default' : '7-BM-A,B',
         'type': str,
-        'help': "beam line"},
+        'help': "beam line name as define in the APS scheduling system"},
     }
 
-SECTIONS['experiment'] = {
-    'year-month': {
-        'default': '2020-12',
-        'type': str,
-        'help': "Experiment year and month",
-        'metavar': 'FILE'},
-    'pi-last-name': {
-        'default': 'decarlo',
-        'type': str,
-        'help': "Experiment PI last name",
-        'metavar': 'FILE'},
-    'pi-email': {
-        'default': 'decarlof@gmail.com',
-        'type': str,
-        'help': "Experiment PI email",
-        'metavar': 'FILE'}}
+# SECTIONS['experiment'] = {
+#     'year-month': {
+#         'default': '2020-12',
+#         'type': str,
+#         'help': "Experiment year and month",
+#         'metavar': 'FILE'},
+#     'pi-last-name': {
+#         'default': 'decarlo',
+#         'type': str,
+#         'help': "Experiment PI last name",
+#         'metavar': 'FILE'},
+#     'pi-email': {
+#         'default': 'decarlof@gmail.com',
+#         'type': str,
+#         'help': "Experiment PI email",
+#         'metavar': 'FILE'}}
 
 SECTIONS['globus'] = {
-    'app-id': {
-        'default': 'a9badd00-39c3-4473-b180-8bccc113ba1d', # for usr32idc
+    'experiment-type': {
         'type': str,
-        'help': "App id UUID, to create one see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client",
-        'metavar': 'PATH'},
+        'default': '7BM',
+        'help': 'Experiment type in the DM system'},
+    'primary-beamline-contact-badge': {
+        'type': int,
+        'default': 56788,
+        'help': 'Badge name of primary beamline contact.  Added to all DM experiments'},
+    'primary-beamline-contact-email': {
+        'default': 'akastengren@anl.gov',
+        'type': str,
+        'help': "Beamline scientist email",
+        'metavar': 'FILE'},
+    'secondary-beamline-contact-badge': {
+        'type': int,
+        'default': 56788,
+        'help': 'Badge name of primary beamline contact.  Added to all DM experiments'},
+    'secondary-beamline-contact-email': {
+        'default': 'akastengren@anl.gov',
+        'type': str,
+        'help': "Beamline scientist email",
+        'metavar': 'FILE'},
+    'globus-message-file': {
+        'default': 'message-7bm.txt',
+        'type': str,
+        'help': "File name of the notification e-mail message to user",
+        'metavar': 'FILE'},
+    'edit-user-badge': {
+        'default': 0,
+        'type': int,
+        'help': 'Badge number of the last user manually added to the experiment'},
     'globus-server-name': {
         'type': str,
-        'default': 'petrel',
-        'help': "Globus server name"},
-    'globus-server-uuid': {
-        'type': str,
-        'default': 'e133a81a-6d04-11e5-ba46-22000b92c6ec', # petrel tomography
-        'help': "Globus server UUID"},
-    'globus-message': {
-        'type': str,
-        'default': 'Notification Message to user',
-        'help': "Globus server UUID"},
-    'globus-message-file': {
-        'default': MESSAGE_FILE_NAME,
-        'type': str,
-        'help': "File name of the notification message to user",
-        'metavar': 'FILE'},
-    'globus-server-top-dir': {
-        'type': str,
-        'default': '/2-BM/',
-        'help': "Globus server top directory"}}
+        'default': 'voyager',
+        'help': "Globus server name. Supported severs are: voyager or petrel"},
+    # 'globus-server-uuid': {
+    #     'default': 'e133a81a-6d04-11e5-ba46-22000b92c6ec',
+    #     'type': str,
+    #     'help': 'Globus UUID of the endpoint for formation of a direct email link, Options are e133a81a-6d04-11e5-ba46-22000b92c6ec for petrel and 9c9cb97e-de86-11e6-9d15-22000a1e3b52 for voyager'},
+    # 'globus-app-uuid': {
+    #     'default': 'a9badd00-39c3-4473-b180-8bccc113ba1d', # for usr32idc/petrel
+    #     'type': str,
+    #     'help': "Globus app UUID, to create one see https://globus-sdk-python.readthedocs.io/en/stable/tutorial/#step-1-get-a-client",
+    #     'metavar': 'PATH'},
+    # 'globus-server-top-dir': {
+    #     'default': '/gdata/dm/7BM',
+    #     'type': str,
+    #     'help': 'Path from data storage root to the beamline top directory. Options are /gdata/dm/7BM or /gdata/dm/2BM'},
+    } 
 
 SECTIONS['local'] = {
     'analysis': {
         'type': str,
-        'default': 'handyn',
+        'default': 'mach',
         'help': "Computer running the data analysis"},
     'analysis-user-name': {
         'type': str,
-        'default': 'tomo',
+        'default': '7bmb',
         'help': "User name to access the data analysis computer"},
     'analysis-top-dir': {
         'type': str,
@@ -110,55 +118,64 @@ SECTIONS['local'] = {
         'help': "raw data top directory"},
     'detector': {
         'type': str,
-        'default': 'pg10ge',
+        'default': 'prandtl',
         'help': "Computer controlling the detector where the raw data are stored"},
     'detector-user-name': {
         'type': str,
-        'default': 'user2bmb',
+        'default': '7bmb',
         'help': "User name to access the computer controlling the detector"},
     'detector-top-dir': {
         'type': str,
         'default': '/local/data/',
-        'help': "raw data top directory"}}
+        'help': "raw data top directory"},
+    }
+
 
 SECTIONS['epics'] = {
-    'experiment-year-month': {
-        'default': '2bmS1:ExpInfo:ExperimentYearMonth', 
+    'ioc-prefix' : {
+        'default' : '7bmb1:',
         'type': str,
+        'help': "IOC prefix for PVs"},
+    'tomoscan-prefix' : {
+        'default' : 'TomoScan:',
+        'type': str,
+        'help': "scan prefix for PVs"},
+    'experiment-year-month': {
+        'default': 'ExperimentYearMonth', 
+       'type': str,
         'help': "EPICS process variable containing the experiment year and month",
         'metavar': 'PATH'},
     'user-email': {
-        'default': '2bmS1:ExpInfo:UserEmail', 
+        'default': 'UserEmail', 
         'type': str,
         'help': "EPICS process variable containing the user email address",
         'metavar': 'PATH'},
     'user-last-name': {
-        'default': '2bmS1:ExpInfo:UserLastName', 
+        'default': 'UserLastName', 
         'type': str,
         'help': "EPICS process variable containing the user last name",
-        'metavar': 'PATH'}}
+        'metavar': 'PATH'},
+    'proposal-number': {
+        'default': 'ProposalNumber',
+        'type': str,
+        'help': 'EPICS PV containing the proposal number',
+        'metavar': 'PATH'},
+    'proposal-title': {
+        'default': 'ProposalTitle',
+        'type': str,
+        'help': 'EPICS PV containing the proposal title',
+        'metavar': 'PATH'},
+    }
 
 SECTIONS['email'] = {
     'schedule': {
         'default': False,
         'help': 'Set to True to send and email to all users listed in the current proposal',
-        'action': 'store_true'},
-    'support-primary-email': {
-        'default': 'pshevchenko@anl.gov',
-        'type': str,
-        'help': "Beamline scientist email",
-        'metavar': 'FILE'},
-    'support-secondary-email': {
-        'default': 'decarlo@anl.gov',
-        'type': str,
-        'help': "Beamline scientist email",
-        'metavar': 'FILE'}}
+        'action': 'store_true'}}
 
+GLOBUS_PARAMS = ('globus', 'local', 'epics')
 
-GLOBUS_PARAMS = ('scheduling', 'globus', 'local', 'experiment','epics')
-EMAIL_PARAMS = ('scheduling', 'email', 'globus', 'epics')
-
-NICE_NAMES = ('General', 'Input')
+NICE_NAMES = ('General', 'Scheduling', 'Globus', 'Local', 'Epics', 'e-mail')
 
 def get_config_name():
     """Get the command line --config option."""
@@ -209,7 +226,7 @@ def config_to_list(config_name=CONFIG_FILE_NAME):
         for name, opts in ((n, o) for n, o in SECTIONS[section].items() if config.has_option(section, n)):
             value = config.get(section, name)
 
-            if value is not '' and value != 'None':
+            if value != '' and value != 'None':
                 action = opts.get('action', None)
 
                 if action == 'store_true' and value == 'True':
@@ -253,6 +270,8 @@ def write(config_file, args=None, sections=None):
     otherwise use the defaults. If *sections* are specified, write values from
     *args* only to those sections, use the defaults on the remaining ones.
     """
+    log.info('Writing initial config file')
+    log.info(config_file)
     config = configparser.ConfigParser()
 
     for section in SECTIONS:
@@ -266,7 +285,7 @@ def write(config_file, args=None, sections=None):
             else:
                 value = opts['default'] if opts['default'] is not None else ''
 
-            prefix = '# ' if value is '' else ''
+            prefix = '# ' if value == '' else ''
 
             if name != 'config':
                 config.set(section, prefix + name, str(value))
@@ -274,7 +293,7 @@ def write(config_file, args=None, sections=None):
         config.write(f)
 
 
-def log_values(args):
+def show_config(args):
     """Log all values set in the args namespace.
 
     Arguments are grouped according to their section and logged alphabetically
@@ -282,12 +301,12 @@ def log_values(args):
     """
     args = args.__dict__
 
+    log.warning('Globus status start')
     for section, name in zip(SECTIONS, NICE_NAMES):
-        entries = sorted((k for k in args.keys() if k in SECTIONS[section]))
-
+        entries = sorted((k for k in args.keys() if k.replace('_', '-') in SECTIONS[section]))
         if entries:
-            log.info(name)
-
             for entry in entries:
-                value = args[entry] if args[entry] is not None else "-"
+                value = args[entry] if args[entry] != None else "-"
                 log.info("  {:<16} {}".format(entry, value))
+
+    log.warning('Globus status end')
