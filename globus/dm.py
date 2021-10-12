@@ -237,6 +237,26 @@ def list_users(args):
                     make_pretty_user_name(user_obj), user_obj['badge']))
 
 
+def list_users_this_dm_exp(args):
+    '''Provide a list of user names for this DM expt 
+    in the form "d(badge#)"
+    '''
+    log.info('Listing the users on the DM experiment')
+    exp_name = directories.make_directory_name(args)
+    try:
+        exp_obj = exp_api.getExperimentByName(exp_name)
+    except:
+        log.error('   No appropriate DM experiment found.')
+        return None
+    username_list = exp_obj['experimentUsernameList']
+    if len(username_list) == 0:
+        log.info('   No users for this experiment')
+        return None
+    else:
+        print(username_list)
+        return username_list
+
+
 def make_pretty_user_name(user_obj):
     '''Makes a printable name from the DM user object
     '''

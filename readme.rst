@@ -9,6 +9,15 @@ The notification email can be sent to all users listed in the beamline schedule 
 year-month, pi_last_name and pi_email are read from the EPIC PVs defined in the 'epics' section of the `globus config file <https://github.com/xray-imaging/globus/blob/master/globus/config.py>`_. By default these PVs are served by `TomoScan <https://tomoscan.readthedocs.io/en/latest/tomoScanApp.html#user-information>`_  and can be automatically updated for the current user using `dmagic tag <https://dmagic.readthedocs.io/en/latest/source/usage.html>`_.
 
 
+Dependencies
+------------
+
+`globus` depends on the Globus SDK and paramiko.  These can be downloaded from conda via::
+
+    $ conda install -c conda-forge globus-sdk
+    $ conda install -c anaconda paramiko
+
+
 Installation
 ------------
 

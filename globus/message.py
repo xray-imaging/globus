@@ -41,8 +41,10 @@ def send_email(args):
         log.warning('   *** Message not not sent')
         return False
 
-    users = scheduling.get_current_users(args)
-    emails = scheduling.get_current_emails(users, exclude_pi=False)
+    users = dm.list_users_this_dm_exp(args)
+    emails = dm.make_user_email_list(users)
+    #users = scheduling.get_current_users(args)
+    #emails = scheduling.get_current_emails(users, exclude_pi=False)
     emails.append(args.primary_beamline_contact_email)
     emails.append(args.secondary_beamline_contact_email)
 
