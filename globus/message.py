@@ -49,7 +49,7 @@ def send_email(args):
     emails.append(args.secondary_beamline_contact_email)
 
     if (args.globus_server_name == 'voyager'):
-        s = smtplib.SMTP('localhost')
+        s = smtplib.SMTP('mailhost.anl.gov')
         for em in emails:
             if args.msg['To'] is None:
                 args.msg['To'] = em
