@@ -148,9 +148,17 @@ def main():
 
     args = config.parse_known_args(parser, subparser=True)
   
-    
+    #Do config here, because otherwise we won't have PVs to update our info anyway
+    if args._func == set_config:
+        try:
+            args._func(args)
+            return
+        except RuntimeError as e:
+            log.error(str(e))
+            sys.exit(1)
+        return
+
     #Init here, otherwise we don't have parameters to do the following updates
-    
     args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
 
     if args._func == init:
@@ -160,7 +168,8 @@ def main():
         except RuntimeError as e:
             log.error(str(e))
             sys.exit(1)
-         
+        return 
+
     args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
 
     if (args.globus_server_name == 'voyager'):
