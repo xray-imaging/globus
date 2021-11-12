@@ -3,7 +3,7 @@ GLOBUS
 ======
 
 
-`globus <https://github.com/xray-imaging/globus>`_ is a Python script that interfaced with the APS Data Management System.  It reads beamline PVs to set up a Data Management experiment, create directories on the data acquisition and analysis machines, manage users for the experiment, send e-mails to users with information on how to get their data from Voyager, and manage automated data transfer (termed DAQs) from the analysis machine to Voyager.
+`globus <https://github.com/xray-imaging/globus>`_ is a Python script that interfaced with the APS Data Management System (e.g. Voyager) and a generic `Globus server <https://www.globus.org/>`_ (e.g. Petrel).  It reads beamline PVs to set up a Data Management experiment, create directories on the data acquisition and analysis machines, manage users for the experiment, send e-mails to users with information on how to get their data from Voyager or Petrel, and manage automated data transfer (termed DAQs) from the analysis machine to Voyager.
 The notification email can be sent to all users listed in the beamline schedule by using the --schedule option.
 
 year-month, pi_last_name and pi_email are read from the EPIC PVs defined in the 'epics' section of the `globus config file <https://github.com/xray-imaging/globus/blob/master/globus/config.py>`_. By default these PVs are served by `TomoScan <https://tomoscan.readthedocs.io/en/latest/tomoScanApp.html#user-information>`_  and can be automatically updated for the current user using `dmagic tag <https://dmagic.readthedocs.io/en/latest/source/usage.html>`_.
