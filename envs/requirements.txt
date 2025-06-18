@@ -1,0 +1,8 @@
+pytz
+requests
+numpy
+pyepics
+paramiko
+globus-sdk
+aps-anl-tag 
+aps-dm-api

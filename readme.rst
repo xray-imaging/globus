@@ -12,10 +12,7 @@ year-month, pi_last_name and pi_email are read from the EPIC PVs defined in the 
 Dependencies
 ------------
 
-`globus` depends on the Globus SDK and paramiko.  These can be downloaded from conda via::
-
-    $ conda install -c conda-forge globus-sdk
-    $ conda install -c anaconda paramiko
+`globus` dependencies are listed in the envs/requirements.txt file. 
 
 
 Installation
@@ -25,22 +22,13 @@ Install from `Anaconda <https://www.anaconda.com/distribution/>`_ python3.x, the
 
     $ git clone https://github.com/xray-imaging/globus.git
     $ cd globus
-    $ python setup.py install
+    $ pip install .
 
-You will also need to have the APS Data Management system installed for your beamline; contact 
-the `SDM group <https://www.aps.anl.gov/Scientific-Software-Engineering-And-Data-Management>`_ 
-for this installation. Once installed you can run globus in a terminal with::
 
-    $ source /home/dm_bm/etc/dm.setup.sh
-    $ globus -h
+Environment configuration
+-------------------------
 
-Alternatively you can download the Data Management API via conda
-
-::
-
-    conda install -c aps-anl-tag aps-dm-api
-
-There are also several environment variables that must be set for the DM API to work properly.  They can be found in the /home/dm_bm/etc/dm.conda.setup.sh script.  Copy everything in this script except the change to the PATH to your account's ~/.bashrc file.
+There are also several environment variables that must be set for the DM API to work properly.  They can be found in the /home/dm_bm/etc/dm.conda.setup.sh script.  Copy everything in this script to your account's ~/.bashrc file.
 
 
 Configuration
