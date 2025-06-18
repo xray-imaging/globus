@@ -158,20 +158,6 @@ def main():
             sys.exit(1)
         return
 
-    #Init here, otherwise we don't have parameters to do the following updates
-    args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
-
-    if args._func == init:
-        try:
-            args._func(args)
-            return
-        except RuntimeError as e:
-            log.error(str(e))
-            sys.exit(1)
-        return 
-
-    args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
-
     if (args.globus_server_name == 'voyager'):
         args.globus_server_uuid = '9c9cb97e-de86-11e6-9d15-22000a1e3b52'
         args.globus_server_top_dir = '/gdata/dm/7BM'
@@ -183,13 +169,36 @@ def main():
         log.error("%s is not a supported globus server" % args.globus_server_name)
         exit()
 
+    #Init here, otherwise we don't have parameters to do the following updates
+    args.year_month, args.pi_last_name, args.gup_number, args.gup_title = pv.update_experiment_info(args)
+
+    required_args = {
+        'year_month': args.year_month,
+        'pi_last_name': args.pi_last_name,
+        'gup_number': args.gup_number,
+        'gup_title': args.gup_title,
+    }
+
+    for name, value in required_args.items():
+        if value is None:
+            log.error(f"Error: Required argument '{name}' is missing. Check that tomoscan with prefix %s%s is up and running" % (args.ioc_prefix, args.tomoscan_prefix))
+            log.error(f"To change the tomoscan name use options: --ioc-prefix %s --tomoscan-prefix %s" % (args.ioc_prefix, args.tomoscan_prefix))
+            sys.exit(1)
+
+    if args._func == init:
+        try:
+            args._func(args)
+            return
+        except RuntimeError as e:
+            log.error(str(e))
+            sys.exit(1)
+        return
+
     try:
         args._func(args)
     except RuntimeError as e:
         log.error(str(e))
         sys.exit(1)
 
-
 if __name__ == '__main__':
     main()
-
