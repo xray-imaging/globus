@@ -47,11 +47,7 @@ Once the DMagic medm screen is synchronized with the APS scheduling system and c
   :width: 400
   :alt: medm screen
 
-you can run globus as follows::
-
-    $ source /home/dm_bm/etc/dm.setup.sh
-
-then:
+::
 
     globus -h for help
         
