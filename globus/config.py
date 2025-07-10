@@ -9,6 +9,7 @@ from globus import log
 
 CONFIG_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'globus.conf')
 TOKEN_FILE_NAME = os.path.join(str(pathlib.Path.home()), 'token.npy')
+CREDENTIALS_FILE_NAME = os.path.join(str(pathlib.Path.home()), '.scheduling_credentials')
 
 SECTIONS = OrderedDict()
 
@@ -33,6 +34,19 @@ SECTIONS['scheduling'] = {
         'default' : '7-BM-A,B',
         'type': str,
         'help': "beam line name as define in the APS scheduling system"},
+    'set': {     
+        'type': float,
+        'default': 0,
+        'help': "Number of +/- number days for the current date. Used for setting user info for past/future user groups"},
+    'url':{
+        'default': 'https://beam-api-dev.aps.anl.gov',
+        'type': str,
+        'help': "URL address of the scheduling system REST API' "},
+    'credentials': {
+        'default': CREDENTIALS_FILE_NAME,
+        'type': str,
+        'help': "File name containing the restAPI service credetinals in the format of user|pwd",
+        'metavar': 'FILE'},    
     }
 
 # SECTIONS['experiment'] = {
@@ -173,7 +187,7 @@ SECTIONS['email'] = {
         'help': 'Set to True to send and email to all users listed in the current proposal',
         'action': 'store_true'}}
 
-GLOBUS_PARAMS = ('globus', 'local', 'epics')
+GLOBUS_PARAMS = ('globus', 'scheduling', 'local', 'epics')
 
 NICE_NAMES = ('General', 'Scheduling', 'Globus', 'Local', 'Epics', 'e-mail')
 

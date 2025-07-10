@@ -1,13 +1,16 @@
 import datetime
-
+import json
+import requests
 import dm
+import dmagic
+
 from globus import log
 from globus import pv
 from globus import directories
-import dmagic
+from globus import authorize
+from globus import scheduling
 
 exp_api = dm.ExperimentDsApi()
-bss_api = dm.BssApsDbApi()
 user_api = dm.UserDsApi()
 daq_api = dm.ExperimentDaqApi()
 oee = dm.common.exceptions.objectAlreadyExists.ObjectAlreadyExists
@@ -22,8 +25,8 @@ def make_dm_username_list(args):
     '''Make a list of DM usernames 'd+badge#' from the current proposal (GUP number).
     '''
     log.info('Making a list of DM system usernames from target proposal')
-    target_prop = bss_api.getProposal(str(args.gup_number))
-    users = target_prop['experimenters']
+    target_prop = scheduling.get_beamtime(str(args.gup_number), args)
+    users = target_prop['beamtime']['proposal']['experimenters']
     log.info('   Adding the primary beamline contact')
     user_ids = {'d' + str(args.primary_beamline_contact_badge)}
     for u in users:
@@ -75,12 +78,7 @@ def make_user_email_list(username_list):
         
 
 def create_experiment(args):
-    '''Creates a new DM experiment on Voyager.
-
-    Parameters
-    ----------
-
-    args : list
+    '''Creates a new DM experiment on Voyager.  Parameters ---------- args : list
         args is used to extract current year_month, pi_last_name, prop_number, 
         prop_title and generate a unique DM experiment name in the form of 
         year-month-PILastName-ProposalNumber
@@ -98,13 +96,13 @@ def create_experiment(args):
         return old_exp 
     except:
         log.info('Creating new DM experiment: {0:s}/{1:s}'.format(args.year_month, dir_name))
-    target_prop = bss_api.getProposal(str(args.gup_number))
+    target_beamtime = scheduling.get_beamtime(args.gup_number, args)
     start_datetime = datetime.datetime.strptime(
-                        target_prop['startTime'],
-                        '%Y-%m-%d %H:%M:%S%z')
+                        target_beamtime['startTime'],
+                        '%Y-%m-%dT%H:%M:%S%z')
     end_datetime = datetime.datetime.strptime(
-                        target_prop['endTime'],
-                        '%Y-%m-%d %H:%M:%S%z')
+                        target_beamtime['endTime'],
+                        '%Y-%m-%dT%H:%M:%S%z')
     new_exp = exp_api.addExperiment(dir_name, typeName = args.experiment_type,
                         description = args.gup_title, rootPath = args.year_month,
                         startDate = start_datetime.strftime('%d-%b-%y'),
@@ -134,7 +132,6 @@ def start_daq(args):
     for incoming files, and will transfer data automatically.
     Alternative is to upload files after experiment is done.
     '''
-    
     exp_name = directories.make_directory_name(args)
     analysis_dir_name = directories.create_analysis_dir_name(args)
     log.info('Check that the directory exists on the analysis machine')
