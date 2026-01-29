@@ -116,7 +116,10 @@ def create_experiment(args):
 def add_users(exp_obj, username_list):
     '''Add a list of users to a DM experiment
     '''
-    existing_unames = exp_obj['experimentUsernameList']
+    try:
+        existing_unames = exp_obj['experimentUsernameList']
+    except:
+        existing_unames = []
     for uname in username_list:
         user_obj = user_api.getUserByUsername(uname)
         if uname in existing_unames:
