@@ -29,6 +29,8 @@ def make_dm_username_list(args):
     users = target_prop['beamtime']['proposal']['experimenters']
     log.info('   Adding the primary beamline contact')
     user_ids = {'d' + str(args.primary_beamline_contact_badge)}
+    log.info('   Adding the secondary beamline contact')
+    user_ids.add('d' + str(args.secondary_beamline_contact_badge))
     for u in users:
         log.info('   Adding user {0}, {1}, badge {2}'.format(
                     u['lastName'], u['firstName'], u['badge']))
