@@ -65,6 +65,9 @@ def dirs(args):
     analysis_dir_name = directories.create_analysis_dir_name(args)
     remote_server = args.analysis_user_name + '@' + args.analysis
     directories.mkdir(remote_server, analysis_dir_name)
+    # add a directory of analysis_dir_name + '_rec' to match 2025 usage
+    directories.mkdir(remote_server, analysis_dir_name + '_rec')
+    
  
 
 def init(args):
