@@ -58,6 +58,7 @@ def get_beamtime(gup_number, args):
     item : dict-like object
         Beamtime information for the target beamtime
     """
+    import pdb; pdb.set_trace()
     auth = authorize.basic(args.credentials)
     end_point = "beamline-scheduling/sched-api/activity/findByRunNameAndBeamlineId"
     run_name = current_run(args)
@@ -68,8 +69,8 @@ def get_beamtime(gup_number, args):
         log.error("No response from the restAPI. Error: %s" % reply.status_code)    
         return None
     for item in reply.json():
-        #print(item['beamtime']['proposal'])
-        #print(item['beamtime']['proposal']['gupId'])
+        print(item['beamtime']['proposal'])
+        print(item['beamtime']['proposal']['gupId'])
         if int(item['beamtime']['proposal']['gupId']) == int(gup_number):
             log.info("Beamtime for GUP {0} found in run {1}".format(gup_number, run_name))
             return item

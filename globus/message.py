@@ -43,8 +43,12 @@ def send_email(args):
 
     users = dm.list_users_this_dm_exp(args)
     emails = dm.make_user_email_list(users)
+    #users = scheduling.get_current_users(args)
+    #emails = scheduling.get_current_emails(users, exclude_pi=False)
+    emails.append(args.primary_beamline_contact_email)
+    emails.append(args.secondary_beamline_contact_email)
 
-    if (args.globus_server_name == 'sojourner'):
+    if (args.globus_server_name == 'voyager'):
         s = smtplib.SMTP('mailhost.anl.gov')
         for em in emails:
             if args.msg['To'] is None:
