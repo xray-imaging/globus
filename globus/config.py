@@ -100,8 +100,8 @@ SECTIONS['globus'] = {
         'help': 'Badge number of the last user manually added to the experiment'},
     'globus-server-name': {
         'type': str,
-        'default': 'sojourner',
-        'help': "Globus server name. Supported severs are: sojourner or petrel"},
+        'default': 'voyager',
+        'help': "Globus server name. Supported severs are: voyager or petrel"},
     # 'globus-server-uuid': {
     #     'default': 'e133a81a-6d04-11e5-ba46-22000b92c6ec',
     #     'type': str,
